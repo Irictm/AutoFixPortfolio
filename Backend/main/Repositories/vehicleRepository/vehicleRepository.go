@@ -39,7 +39,7 @@ func (vr *VehicleRepository) GetVehicleById(id uint32) (*Vehicle, error) {
 
 func (vr *VehicleRepository) GetAllVehicles() ([]Vehicle, error) {
 	rows, err := vr.DB.Query(context.Background(),
-		"SELECT id, patent, brand, model, vehicle_type, fabrication_date, motor_type, seats, mileage FROM vehicles")
+		"SELECT * FROM vehicles")
 	if err != nil {
 		log.Printf("Failed QUERY, could not get all Vehicles: %v", err)
 		return nil, err
