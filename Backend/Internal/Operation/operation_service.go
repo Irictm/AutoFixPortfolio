@@ -1,8 +1,4 @@
-package operationService
-
-import (
-	. "github.com/Irictm/AutoFixPortfolio/Backend/main/Entities/operation"
-)
+package operation
 
 type IOperationRepository interface {
 	SaveOperation(Operation) error

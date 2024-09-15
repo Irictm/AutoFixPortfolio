@@ -1,11 +1,10 @@
-package repairController
+package repair
 
 import (
 	"log"
 	"net/http"
 	"strconv"
 
-	. "github.com/Irictm/AutoFixPortfolio/Backend/main/Entities/repair"
 	"github.com/gin-gonic/gin"
 )
 

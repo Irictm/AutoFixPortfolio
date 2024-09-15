@@ -1,8 +1,4 @@
-package repairService
-
-import (
-	. "github.com/Irictm/AutoFixPortfolio/Backend/main/Entities/repair"
-)
+package repair
 
 type IRepairRepository interface {
 	SaveRepair(Repair) error

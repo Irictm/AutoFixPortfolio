@@ -1,0 +1,79 @@
+package repair
+
+import (
+	"context"
+	"log"
+
+	"github.com/jackc/pgx/v5"
+)
+
+type RepairRepository struct {
+	DB *pgx.Conn
+}
+
+func (repo *RepairRepository) SaveRepair(r Repair) error {
+	_, err := repo.DB.Exec(context.Background(), "INSERT INTO repairs "+
+		"(date_of_admission, date_of_release, date_of_pick_up, id_receipt, id_vehicle) "+
+		"VALUES ($1, $2, $3, $4, $5)",
+		r.DateOfAdmission, r.DateOfRelease, r.DateOfPickUp, r.Id_receipt, r.Id_vehicle)
+
+	if err != nil {
+		log.Printf("Failed QUERY, could not save repair - [%v]", err)
+		return err
+	}
+	return nil
+}
+
+func (repo *RepairRepository) GetRepairById(id uint32) (*Repair, error) {
+	var repair Repair
+	err := repo.DB.QueryRow(context.Background(), "SELECT * FROM repairs WHERE id = $1", id).Scan(
+		&repair.DateOfAdmission, &repair.DateOfRelease, &repair.DateOfPickUp,
+		&repair.Id_receipt, &repair.Id_vehicle)
+	if err != nil {
+		log.Printf("Failed QUERY, could not get repair with Id %d - [%v]", id, err)
+		return nil, err
+	}
+	return &repair, nil
+}
+
+func (repo *RepairRepository) GetAllRepairs() ([]Repair, error) {
+	rows, err := repo.DB.Query(context.Background(),
+		"SELECT * FROM repairs")
+	if err != nil {
+		log.Printf("Failed QUERY, could not get all Repairs - [%v]", err)
+		return nil, err
+	}
+
+	repairs, err := pgx.CollectRows(rows, pgx.RowToStructByName[Repair])
+	if err != nil {
+		log.Printf("Failed Row Collection, could not get rows or parse them - [%v]", err)
+		return nil, err
+	}
+
+	return repairs, nil
+}
+
+func (repo *RepairRepository) UpdateRepair(r Repair) error {
+	_, err := repo.DB.Exec(context.Background(), "UPDATE repairs "+
+		"SET date_of_admission = $2, date_of_release = $3, date_of_pick_up = $4, "+
+		"id_receipt = $5, id_vehicle = $6 "+
+		"WHERE id = $1",
+		r.Id, r.DateOfAdmission, r.DateOfRelease, r.DateOfPickUp, r.Id_receipt, r.Id_vehicle)
+
+	if err != nil {
+		log.Printf("Failed QUERY, could not update repair - [%v]", err)
+		return err
+	}
+	return nil
+}
+
+func (repo *RepairRepository) DeleteRepairById(id uint32) error {
+	_, err := repo.DB.Exec(context.Background(), "DELETE FROM repairs "+
+		"WHERE id = $1", id)
+
+	if err != nil {
+		log.Printf("Failed QUERY, could not update repair - [%v]", err)
+		return err
+	}
+	return nil
+}

@@ -1,11 +1,10 @@
-package operationController
+package operation
 
 import (
 	"log"
 	"net/http"
 	"strconv"
 
-	. "github.com/Irictm/AutoFixPortfolio/Backend/main/Entities/operation"
 	"github.com/gin-gonic/gin"
 )
 

@@ -4,15 +4,10 @@ import (
 	"context"
 	"log"
 
-	"github.com/Irictm/AutoFixPortfolio/Backend/main/Controllers/operationController"
-	"github.com/Irictm/AutoFixPortfolio/Backend/main/Controllers/repairController"
-	"github.com/Irictm/AutoFixPortfolio/Backend/main/Controllers/vehicleController"
-	"github.com/Irictm/AutoFixPortfolio/Backend/main/Repositories/operationRepository"
-	"github.com/Irictm/AutoFixPortfolio/Backend/main/Repositories/repairRepository"
-	"github.com/Irictm/AutoFixPortfolio/Backend/main/Repositories/vehicleRepository"
-	"github.com/Irictm/AutoFixPortfolio/Backend/main/Services/operationService"
-	"github.com/Irictm/AutoFixPortfolio/Backend/main/Services/repairService"
-	"github.com/Irictm/AutoFixPortfolio/Backend/main/Services/vehicleService"
+	operation "github.com/Irictm/AutoFixPortfolio/Backend/Internal/Operation"
+	receipt "github.com/Irictm/AutoFixPortfolio/Backend/Internal/Receipt"
+	repair "github.com/Irictm/AutoFixPortfolio/Backend/Internal/Repair"
+	vehicle "github.com/Irictm/AutoFixPortfolio/Backend/Internal/Vehicle"
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5"
 )
@@ -22,20 +17,25 @@ func InjectDependencies(rout *gin.Engine) {
 	if err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
-	vehicleRepository := &vehicleRepository.VehicleRepository{DB: db}
-	vehicleService := &vehicleService.VehicleService{Repository: vehicleRepository}
-	vehicleController := vehicleController.VehicleController{Service: vehicleService}
+	vehicleRepository := &vehicle.VehicleRepository{DB: db}
+	vehicleService := &vehicle.VehicleService{Repository: vehicleRepository}
+	vehicleController := vehicle.VehicleController{Service: vehicleService}
 	vehicleController.LinkPaths(rout)
 
-	operationRepository := &operationRepository.OperationRepository{DB: db}
-	operationService := &operationService.OperationService{Repository: operationRepository}
-	operationController := operationController.OperationController{Service: operationService}
+	operationRepository := &operation.OperationRepository{DB: db}
+	operationService := &operation.OperationService{Repository: operationRepository}
+	operationController := operation.OperationController{Service: operationService}
 	operationController.LinkPaths(rout)
 
-	repairRepository := &repairRepository.RepairRepository{DB: db}
-	repairService := &repairService.RepairService{Repository: repairRepository}
-	repairController := repairController.RepairController{Service: repairService}
+	repairRepository := &repair.RepairRepository{DB: db}
+	repairService := &repair.RepairService{Repository: repairRepository}
+	repairController := repair.RepairController{Service: repairService}
 	repairController.LinkPaths(rout)
+
+	receiptRepository := &receipt.ReceiptRepository{DB: db}
+	receiptService := &receipt.ReceiptService{Repository: receiptRepository}
+	receiptController := receipt.ReceiptController{Service: receiptService}
+	receiptController.LinkPaths(rout)
 }
 
 func ConnectPostgreSQL(user string, pass string, host string, port string, dbname string) (*pgx.Conn, error) {

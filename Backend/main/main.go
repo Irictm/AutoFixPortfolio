@@ -1,7 +1,7 @@
 package main
 
 import (
-	injector "github.com/Irictm/AutoFixPortfolio/Backend/main/Injector"
+	injector "github.com/Irictm/AutoFixPortfolio/Backend/Main/Injector"
 	"github.com/gin-gonic/gin"
 )
 

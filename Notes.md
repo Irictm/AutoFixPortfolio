@@ -1,6 +1,5 @@
 # Notes
-- Considerar Creacion de detalles de reparacion para guardar
-  montos de operaciones, recargas, descuentos, iva y detalles de estos.
+- Considerar abstraccion de tarifas (Tal vez multiples tablas, un package que las maneja?)
 
 
 # TO DO DataBase
@@ -17,3 +16,4 @@
 - Implementar sistema de usuarios, registro y logging
 - Agregar medidas de seguridad basicas (Anti SQL injection, JWT, etc)
 - Creacion de Tests Unitarios
+- Documentacion

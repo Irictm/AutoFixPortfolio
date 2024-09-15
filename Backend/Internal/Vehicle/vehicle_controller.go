@@ -1,11 +1,10 @@
-package vehicleController
+package vehicle
 
 import (
 	"log"
 	"net/http"
 	"strconv"
 
-	. "github.com/Irictm/AutoFixPortfolio/Backend/main/Entities/vehicle"
 	"github.com/gin-gonic/gin"
 )
 

@@ -1,8 +1,4 @@
-package vehicleService
-
-import (
-	. "github.com/Irictm/AutoFixPortfolio/Backend/main/Entities/vehicle"
-)
+package vehicle
 
 type IVehicleRepository interface {
 	SaveVehicle(Vehicle) error
