@@ -11,17 +11,20 @@ type OperationRepository struct {
 	DB *pgx.Conn
 }
 
-func (repo *OperationRepository) SaveOperation(op Operation) error {
-	_, err := repo.DB.Exec(context.Background(), "INSERT INTO operations "+
+func (repo *OperationRepository) SaveOperation(op Operation) (*Operation, error) {
+	var operation Operation
+	err := repo.DB.QueryRow(context.Background(), "INSERT INTO operations "+
 		"(id, patent, type, date, cost, id_repair) "+
-		"VALUES ($1, $2, $3, $4, $5, $6)",
-		op.Id, op.Patent, op.Type, op.Date, op.Cost, op.Id_repair)
+		"VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
+		op.Id, op.Patent, op.Type, op.Date, op.Cost, op.Id_repair).Scan(
+		&operation.Id, &operation.Patent, &operation.Type,
+		&operation.Date, &operation.Cost, &operation.Id_repair)
 
 	if err != nil {
 		log.Printf("Failed QUERY, could not save operation - [%v]", err)
-		return err
+		return nil, err
 	}
-	return nil
+	return &operation, nil
 }
 
 func (repo *OperationRepository) GetOperationById(id uint32) (*Operation, error) {

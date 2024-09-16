@@ -9,7 +9,7 @@ import (
 )
 
 type IVehicleService interface {
-	SaveVehicle(Vehicle) error
+	SaveVehicle(Vehicle) (*Vehicle, error)
 	GetVehicleById(uint32) (*Vehicle, error)
 	GetAllVehicles() ([]Vehicle, error)
 	UpdateVehicle(Vehicle) error
@@ -27,12 +27,13 @@ func (cntrl *VehicleController) postVehicle(c *gin.Context) {
 		log.Printf("Failed parsing JSON to vehicle - [%v]", err)
 		return
 	}
-	if err := cntrl.Service.SaveVehicle(vehicle); err != nil {
+	newVehicle, err := cntrl.Service.SaveVehicle(vehicle)
+	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, err)
 		log.Printf("Failed saving vehicle - [%v]", err)
 		return
 	}
-	c.IndentedJSON(http.StatusOK, vehicle)
+	c.IndentedJSON(http.StatusOK, newVehicle)
 }
 
 func (cntrl *VehicleController) getVehicleById(c *gin.Context) {

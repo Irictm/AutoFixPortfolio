@@ -9,7 +9,7 @@ import (
 )
 
 type IOperationService interface {
-	SaveOperation(Operation) error
+	SaveOperation(Operation) (*Operation, error)
 	GetOperationById(uint32) (*Operation, error)
 	GetAllOperations() ([]Operation, error)
 	UpdateOperation(Operation) error
@@ -27,12 +27,13 @@ func (cntrl *OperationController) postOperation(c *gin.Context) {
 		log.Printf("Failed parsing JSON to operation - [%v]", err)
 		return
 	}
-	if err := cntrl.Service.SaveOperation(operation); err != nil {
+	newOperation, err := cntrl.Service.SaveOperation(operation)
+	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, err)
 		log.Printf("Failed saving operation - [%v]", err)
 		return
 	}
-	c.IndentedJSON(http.StatusOK, operation)
+	c.IndentedJSON(http.StatusOK, newOperation)
 }
 
 func (cntrl *OperationController) getOperationById(c *gin.Context) {

@@ -11,23 +11,26 @@ type RepairRepository struct {
 	DB *pgx.Conn
 }
 
-func (repo *RepairRepository) SaveRepair(r Repair) error {
-	_, err := repo.DB.Exec(context.Background(), "INSERT INTO repairs "+
+func (repo *RepairRepository) SaveRepair(r Repair) (*Repair, error) {
+	var repair Repair
+	err := repo.DB.QueryRow(context.Background(), "INSERT INTO repairs "+
 		"(date_of_admission, date_of_release, date_of_pick_up, id_receipt, id_vehicle) "+
-		"VALUES ($1, $2, $3, $4, $5)",
-		r.DateOfAdmission, r.DateOfRelease, r.DateOfPickUp, r.Id_receipt, r.Id_vehicle)
+		"VALUES ($1, $2, $3, $4, $5) RETURNING *",
+		r.DateOfAdmission, r.DateOfRelease, r.DateOfPickUp, r.Id_receipt, r.Id_vehicle).Scan(
+		&repair.Id, &repair.DateOfAdmission, &repair.DateOfRelease, &repair.DateOfPickUp,
+		&repair.Id_receipt, &repair.Id_vehicle)
 
 	if err != nil {
 		log.Printf("Failed QUERY, could not save repair - [%v]", err)
-		return err
+		return nil, err
 	}
-	return nil
+	return &repair, nil
 }
 
 func (repo *RepairRepository) GetRepairById(id uint32) (*Repair, error) {
 	var repair Repair
 	err := repo.DB.QueryRow(context.Background(), "SELECT * FROM repairs WHERE id = $1", id).Scan(
-		&repair.DateOfAdmission, &repair.DateOfRelease, &repair.DateOfPickUp,
+		&repair.Id, &repair.DateOfAdmission, &repair.DateOfRelease, &repair.DateOfPickUp,
 		&repair.Id_receipt, &repair.Id_vehicle)
 	if err != nil {
 		log.Printf("Failed QUERY, could not get repair with Id %d - [%v]", id, err)

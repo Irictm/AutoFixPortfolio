@@ -1,7 +1,7 @@
 package operation
 
 type IOperationRepository interface {
-	SaveOperation(Operation) error
+	SaveOperation(Operation) (*Operation, error)
 	GetOperationById(uint32) (*Operation, error)
 	GetAllOperations() ([]Operation, error)
 	UpdateOperation(Operation) error
@@ -12,7 +12,7 @@ type OperationService struct {
 	Repository IOperationRepository
 }
 
-func (serv *OperationService) SaveOperation(op Operation) error {
+func (serv *OperationService) SaveOperation(op Operation) (*Operation, error) {
 	return serv.Repository.SaveOperation(op)
 }
 

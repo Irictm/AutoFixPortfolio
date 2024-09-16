@@ -9,7 +9,7 @@ import (
 )
 
 type IRepairService interface {
-	SaveRepair(Repair) error
+	SaveRepair(Repair) (*Repair, error)
 	GetRepairById(uint32) (*Repair, error)
 	GetAllRepairs() ([]Repair, error)
 	UpdateRepair(Repair) error
@@ -27,12 +27,13 @@ func (cntrl *RepairController) postRepair(c *gin.Context) {
 		log.Printf("Failed parsing JSON to repair - [%v]", err)
 		return
 	}
-	if err := cntrl.Service.SaveRepair(repair); err != nil {
+	newRepair, err := cntrl.Service.SaveRepair(repair)
+	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, err)
 		log.Printf("Failed saving repair - [%v]", err)
 		return
 	}
-	c.IndentedJSON(http.StatusOK, repair)
+	c.IndentedJSON(http.StatusOK, newRepair)
 }
 
 func (cntrl *RepairController) getRepairById(c *gin.Context) {

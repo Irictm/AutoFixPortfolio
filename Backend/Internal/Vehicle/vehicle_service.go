@@ -1,7 +1,7 @@
 package vehicle
 
 type IVehicleRepository interface {
-	SaveVehicle(Vehicle) error
+	SaveVehicle(Vehicle) (*Vehicle, error)
 	GetVehicleById(uint32) (*Vehicle, error)
 	GetAllVehicles() ([]Vehicle, error)
 	UpdateVehicle(Vehicle) error
@@ -12,7 +12,7 @@ type VehicleService struct {
 	Repository IVehicleRepository
 }
 
-func (serv *VehicleService) SaveVehicle(v Vehicle) error {
+func (serv *VehicleService) SaveVehicle(v Vehicle) (*Vehicle, error) {
 	return serv.Repository.SaveVehicle(v)
 }
 

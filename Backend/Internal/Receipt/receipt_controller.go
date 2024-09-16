@@ -9,7 +9,7 @@ import (
 )
 
 type IReceiptService interface {
-	SaveReceipt(Receipt) error
+	SaveReceipt(Receipt) (*Receipt, error)
 	GetReceiptById(uint32) (*Receipt, error)
 	GetAllReceipts() ([]Receipt, error)
 	UpdateReceipt(Receipt) error
@@ -27,12 +27,13 @@ func (cntrl *ReceiptController) postReceipt(c *gin.Context) {
 		log.Printf("Failed parsing JSON to receipt - [%v]", err)
 		return
 	}
-	if err := cntrl.Service.SaveReceipt(receipt); err != nil {
+	newReceipt, err := cntrl.Service.SaveReceipt(receipt)
+	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, err)
 		log.Printf("Failed saving receipt - [%v]", err)
 		return
 	}
-	c.IndentedJSON(http.StatusOK, receipt)
+	c.IndentedJSON(http.StatusOK, newReceipt)
 }
 
 func (cntrl *ReceiptController) getReceiptById(c *gin.Context) {

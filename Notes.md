@@ -1,10 +1,10 @@
 # Notes
-- Considerar abstraccion de tarifas (Tal vez multiples tablas, un package que las maneja?)
+- Considerar envio de tarifas (enviar individualmente?, empaquetar como tabla?, csv?)
+- Considerar agregar personal al sistema (usuarios?) (No considerado inicialmente por
+enunciado, considerado ahora como ejercicio practico)
 
 
 # TO DO DataBase
-- Agregar scripts SQL de generacion de tablas
-- Implementar relaciones entre tablas a nivel de base de datos
 - Diseñar a traves de Triggers y Funciones metodo para guardar Backlog de
   acciones realizadas por usuarios
 

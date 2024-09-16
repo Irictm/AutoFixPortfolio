@@ -1,7 +1,7 @@
 package repair
 
 type IRepairRepository interface {
-	SaveRepair(Repair) error
+	SaveRepair(Repair) (*Repair, error)
 	GetRepairById(uint32) (*Repair, error)
 	GetAllRepairs() ([]Repair, error)
 	UpdateRepair(Repair) error
@@ -12,7 +12,7 @@ type RepairService struct {
 	Repository IRepairRepository
 }
 
-func (serv *RepairService) SaveRepair(r Repair) error {
+func (serv *RepairService) SaveRepair(r Repair) (*Repair, error) {
 	return serv.Repository.SaveRepair(r)
 }
 

@@ -11,17 +11,20 @@ type VehicleRepository struct {
 	DB *pgx.Conn
 }
 
-func (repo *VehicleRepository) SaveVehicle(v Vehicle) error {
-	_, err := repo.DB.Exec(context.Background(), "INSERT INTO vehicles "+
+func (repo *VehicleRepository) SaveVehicle(v Vehicle) (*Vehicle, error) {
+	var vehicle Vehicle
+	err := repo.DB.QueryRow(context.Background(), "INSERT INTO vehicles "+
 		"(patent, brand, model, vehicle_type, fabrication_date, motor_type, seats, mileage) "+
-		"VALUES ($1, $2, $3, $4, $5, $6, $7, $8)",
-		v.Patent, v.Brand, v.Model, v.VehicleType, v.FabricationDate, v.MotorType, v.Seats, v.Mileage)
+		"VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *",
+		v.Patent, v.Brand, v.Model, v.VehicleType, v.FabricationDate, v.MotorType, v.Seats, v.Mileage).Scan(
+		&vehicle.Id, &vehicle.Patent, &vehicle.Brand, &vehicle.Model, &vehicle.VehicleType,
+		&vehicle.FabricationDate, &vehicle.MotorType, &vehicle.Seats, &vehicle.Mileage)
 
 	if err != nil {
 		log.Printf("Failed QUERY, could not save vehicle - [%v]", err)
-		return err
+		return nil, err
 	}
-	return nil
+	return &vehicle, nil
 }
 
 func (repo *VehicleRepository) GetVehicleById(id uint32) (*Vehicle, error) {

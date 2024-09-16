@@ -1,7 +1,7 @@
 package receipt
 
 type IReceiptRepository interface {
-	SaveReceipt(Receipt) error
+	SaveReceipt(Receipt) (*Receipt, error)
 	GetReceiptById(uint32) (*Receipt, error)
 	GetAllReceipts() ([]Receipt, error)
 	UpdateReceipt(Receipt) error
@@ -12,7 +12,7 @@ type ReceiptService struct {
 	Repository IReceiptRepository
 }
 
-func (serv *ReceiptService) SaveReceipt(r Receipt) error {
+func (serv *ReceiptService) SaveReceipt(r Receipt) (*Receipt, error) {
 	return serv.Repository.SaveReceipt(r)
 }
 

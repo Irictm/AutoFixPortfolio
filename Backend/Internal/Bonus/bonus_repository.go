@@ -11,23 +11,26 @@ type BonusRepository struct {
 	DB *pgx.Conn
 }
 
-func (repo *BonusRepository) SaveBonus(b Bonus) error {
-	_, err := repo.DB.Exec(context.Background(), "INSERT INTO bonuses "+
+func (repo *BonusRepository) SaveBonus(b Bonus) (*Bonus, error) {
+	var bonus Bonus
+	err := repo.DB.QueryRow(context.Background(), "INSERT INTO bonuses "+
 		"(brand, remaining, amount) "+
-		"VALUES ($1, $2, $3)",
-		b.Brand, b.Remaining, b.Amount)
+		"VALUES ($1, $2, $3) RETURNING *",
+		b.Brand, b.Remaining, b.Amount).Scan(
+		&bonus.Id, &bonus.Brand, &bonus.Remaining, &bonus.Amount)
 
 	if err != nil {
 		log.Printf("Failed QUERY, could not save bonus - [%v]", err)
-		return err
+		return nil, err
 	}
-	return nil
+	return &bonus, nil
 }
 
 func (repo *BonusRepository) GetBonusById(id uint32) (*Bonus, error) {
 	var bonus Bonus
 	err := repo.DB.QueryRow(context.Background(), "SELECT * FROM bonuses WHERE id = $1", id).Scan(
-		&bonus.Brand, &bonus.Remaining, &bonus.Amount)
+		&bonus.Id, &bonus.Brand, &bonus.Remaining, &bonus.Amount)
+
 	if err != nil {
 		log.Printf("Failed QUERY, could not get bonus with Id %d - [%v]", id, err)
 		return nil, err
@@ -54,7 +57,7 @@ func (repo *BonusRepository) GetAllBonuses() ([]Bonus, error) {
 
 func (repo *BonusRepository) UpdateBonus(b Bonus) error {
 	_, err := repo.DB.Exec(context.Background(), "UPDATE bonuses "+
-		"SET brand = $2, remaining = $3, amount = $4, "+
+		"SET brand = $2, remaining = $3, amount = $4 "+
 		"WHERE id = $1",
 		b.Id, b.Brand, b.Remaining, b.Amount)
 

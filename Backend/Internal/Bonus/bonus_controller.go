@@ -9,7 +9,7 @@ import (
 )
 
 type IBonusService interface {
-	SaveBonus(Bonus) error
+	SaveBonus(Bonus) (*Bonus, error)
 	GetBonusById(uint32) (*Bonus, error)
 	GetAllBonuses() ([]Bonus, error)
 	UpdateBonus(Bonus) error
@@ -27,12 +27,13 @@ func (cntrl *BonusController) postBonus(c *gin.Context) {
 		log.Printf("Failed parsing JSON to bonus - [%v]", err)
 		return
 	}
-	if err := cntrl.Service.SaveBonus(bonus); err != nil {
+	newBonus, err := cntrl.Service.SaveBonus(bonus)
+	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, err)
 		log.Printf("Failed saving bonus - [%v]", err)
 		return
 	}
-	c.IndentedJSON(http.StatusOK, bonus)
+	c.IndentedJSON(http.StatusOK, newBonus)
 }
 
 func (cntrl *BonusController) getBonusById(c *gin.Context) {

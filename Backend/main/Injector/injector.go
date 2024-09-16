@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 
+	bonus "github.com/Irictm/AutoFixPortfolio/Backend/Internal/Bonus"
 	operation "github.com/Irictm/AutoFixPortfolio/Backend/Internal/Operation"
 	receipt "github.com/Irictm/AutoFixPortfolio/Backend/Internal/Receipt"
 	repair "github.com/Irictm/AutoFixPortfolio/Backend/Internal/Repair"
@@ -36,10 +37,15 @@ func InjectDependencies(rout *gin.Engine) {
 	receiptService := &receipt.ReceiptService{Repository: receiptRepository}
 	receiptController := receipt.ReceiptController{Service: receiptService}
 	receiptController.LinkPaths(rout)
-}
 
+	bonusRepository := &bonus.BonusRepository{DB: db}
+	bonusService := &bonus.BonusService{Repository: bonusRepository}
+	bonusController := bonus.BonusController{Service: bonusService}
+	bonusController.LinkPaths(rout)
+}
 func ConnectPostgreSQL(user string, pass string, host string, port string, dbname string) (*pgx.Conn, error) {
 	dataSource := "postgres://" + user + ":" + pass + "@" + host + ":" + port + "/autofix?sslmode=disable"
+
 	db, err := pgx.Connect(context.Background(), dataSource)
 	return db, err
 }

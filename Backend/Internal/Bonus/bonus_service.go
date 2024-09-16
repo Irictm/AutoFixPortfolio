@@ -1,7 +1,7 @@
 package bonus
 
 type IBonusRepository interface {
-	SaveBonus(Bonus) error
+	SaveBonus(Bonus) (*Bonus, error)
 	GetBonusById(uint32) (*Bonus, error)
 	GetAllBonuses() ([]Bonus, error)
 	UpdateBonus(Bonus) error
@@ -12,7 +12,7 @@ type BonusService struct {
 	Repository IBonusRepository
 }
 
-func (serv *BonusService) SaveBonus(b Bonus) error {
+func (serv *BonusService) SaveBonus(b Bonus) (*Bonus, error) {
 	return serv.Repository.SaveBonus(b)
 }
 
