@@ -42,7 +42,9 @@ func InjectDependencies(rout *gin.Engine) {
 	bonusService := &bonus.BonusService{Repository: bonusRepository}
 	bonusController := bonus.BonusController{Service: bonusService}
 	bonusController.LinkPaths(rout)
+
 }
+
 func ConnectPostgreSQL(user string, pass string, host string, port string, dbname string) (*pgx.Conn, error) {
 	dataSource := "postgres://" + user + ":" + pass + "@" + host + ":" + port + "/autofix?sslmode=disable"
 

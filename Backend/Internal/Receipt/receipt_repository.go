@@ -75,7 +75,7 @@ func (repo *ReceiptRepository) DeleteReceiptById(id uint32) error {
 		"WHERE id = $1", id)
 
 	if err != nil {
-		log.Printf("Failed QUERY, could not update receipt - [%v]", err)
+		log.Printf("Failed QUERY, could not delete receipt - [%v]", err)
 		return err
 	}
 	return nil

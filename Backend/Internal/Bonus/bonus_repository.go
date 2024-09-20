@@ -38,6 +38,18 @@ func (repo *BonusRepository) GetBonusById(id uint32) (*Bonus, error) {
 	return &bonus, nil
 }
 
+func (repo *BonusRepository) GetBonusByBrand(brand string) (*Bonus, error) {
+	var bonus Bonus
+	err := repo.DB.QueryRow(context.Background(), "SELECT * FROM bonuses WHERE brand = $1", brand).Scan(
+		&bonus.Id, &bonus.Brand, &bonus.Remaining, &bonus.Amount)
+
+	if err != nil {
+		log.Printf("Failed QUERY, could not get bonus with brand %v - [%v]", brand, err)
+		return nil, err
+	}
+	return &bonus, nil
+}
+
 func (repo *BonusRepository) GetAllBonuses() ([]Bonus, error) {
 	rows, err := repo.DB.Query(context.Background(),
 		"SELECT * FROM bonuses")
@@ -73,7 +85,7 @@ func (repo *BonusRepository) DeleteBonusById(id uint32) error {
 		"WHERE id = $1", id)
 
 	if err != nil {
-		log.Printf("Failed QUERY, could not update bonus - [%v]", err)
+		log.Printf("Failed QUERY, could not delete bonus - [%v]", err)
 		return err
 	}
 	return nil

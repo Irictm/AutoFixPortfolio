@@ -75,7 +75,7 @@ func (repo *RepairRepository) DeleteRepairById(id uint32) error {
 		"WHERE id = $1", id)
 
 	if err != nil {
-		log.Printf("Failed QUERY, could not update repair - [%v]", err)
+		log.Printf("Failed QUERY, could not delete repair - [%v]", err)
 		return err
 	}
 	return nil

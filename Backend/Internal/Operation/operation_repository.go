@@ -38,11 +38,39 @@ func (repo *OperationRepository) GetOperationById(id uint32) (*Operation, error)
 	return &operation, nil
 }
 
+func (repo *OperationRepository) GetOperationVehicleMotorType(op Operation) (string, error) {
+	var motorType string
+	err := repo.DB.QueryRow(context.Background(), "SELECT motor_type FROM vehicles WHERE patent = $1", op.Patent).Scan(
+		&motorType)
+	if err != nil {
+		log.Printf("Failed QUERY, could not get operation motor type - [%v]", err)
+		return "", err
+	}
+	return motorType, nil
+}
+
 func (repo *OperationRepository) GetAllOperations() ([]Operation, error) {
 	rows, err := repo.DB.Query(context.Background(),
 		"SELECT * FROM operations")
 	if err != nil {
 		log.Printf("Failed QUERY, could not get all Operations - [%v]", err)
+		return nil, err
+	}
+
+	operations, err := pgx.CollectRows(rows, pgx.RowToStructByName[Operation])
+	if err != nil {
+		log.Printf("Failed Row Collection, could not get rows or parse them - [%v]", err)
+		return nil, err
+	}
+
+	return operations, nil
+}
+
+func (repo *OperationRepository) GetAllOperationsByRepair(id_repair uint32) ([]Operation, error) {
+	rows, err := repo.DB.Query(context.Background(),
+		"SELECT * FROM operations WHERE id_repair = $1", id_repair)
+	if err != nil {
+		log.Printf("Failed QUERY, could not get all Operations by repair - [%v]", err)
 		return nil, err
 	}
 
@@ -73,7 +101,7 @@ func (repo *OperationRepository) DeleteOperationById(id uint32) error {
 		"WHERE id = $1", id)
 
 	if err != nil {
-		log.Printf("Failed QUERY, could not update operation - [%v]", err)
+		log.Printf("Failed QUERY, could not delete operation - [%v]", err)
 		return err
 	}
 	return nil
