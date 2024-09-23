@@ -1,4 +1,4 @@
-package bonus
+package data
 
 type Bonus struct {
 	Id        uint32

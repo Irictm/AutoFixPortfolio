@@ -2,7 +2,7 @@ package bonus
 
 import (
 	"context"
-	"log"
+	"fmt"
 
 	"github.com/jackc/pgx/v5"
 )
@@ -20,7 +20,7 @@ func (repo *BonusRepository) SaveBonus(b Bonus) (*Bonus, error) {
 		&bonus.Id, &bonus.Brand, &bonus.Remaining, &bonus.Amount)
 
 	if err != nil {
-		log.Printf("Failed QUERY, could not save bonus - [%v]", err)
+		err = fmt.Errorf("failed QUERY, could not save bonus: - %w", err)
 		return nil, err
 	}
 	return &bonus, nil
@@ -32,7 +32,7 @@ func (repo *BonusRepository) GetBonusById(id uint32) (*Bonus, error) {
 		&bonus.Id, &bonus.Brand, &bonus.Remaining, &bonus.Amount)
 
 	if err != nil {
-		log.Printf("Failed QUERY, could not get bonus with Id %d - [%v]", id, err)
+		err = fmt.Errorf("failed QUERY, could not get bonus with Id %d: - %w", id, err)
 		return nil, err
 	}
 	return &bonus, nil
@@ -44,7 +44,7 @@ func (repo *BonusRepository) GetBonusByBrand(brand string) (*Bonus, error) {
 		&bonus.Id, &bonus.Brand, &bonus.Remaining, &bonus.Amount)
 
 	if err != nil {
-		log.Printf("Failed QUERY, could not get bonus with brand %v - [%v]", brand, err)
+		err = fmt.Errorf("failed QUERY, could not get bonus with brand %v: - %w", brand, err)
 		return nil, err
 	}
 	return &bonus, nil
@@ -54,13 +54,13 @@ func (repo *BonusRepository) GetAllBonuses() ([]Bonus, error) {
 	rows, err := repo.DB.Query(context.Background(),
 		"SELECT * FROM bonuses")
 	if err != nil {
-		log.Printf("Failed QUERY, could not get all Bonuses - [%v]", err)
+		err = fmt.Errorf("failed QUERY, could not get all Bonuses: - %w", err)
 		return nil, err
 	}
 
 	bonuses, err := pgx.CollectRows(rows, pgx.RowToStructByName[Bonus])
 	if err != nil {
-		log.Printf("Failed Row Collection, could not get rows or parse them - [%v]", err)
+		err = fmt.Errorf("failed Row Collection, could not get rows or parse them: - %w", err)
 		return nil, err
 	}
 
@@ -74,7 +74,7 @@ func (repo *BonusRepository) UpdateBonus(b Bonus) error {
 		b.Id, b.Brand, b.Remaining, b.Amount)
 
 	if err != nil {
-		log.Printf("Failed QUERY, could not update bonus - [%v]", err)
+		err = fmt.Errorf("failed QUERY, could not update bonus: - %w", err)
 		return err
 	}
 	return nil
@@ -85,7 +85,7 @@ func (repo *BonusRepository) DeleteBonusById(id uint32) error {
 		"WHERE id = $1", id)
 
 	if err != nil {
-		log.Printf("Failed QUERY, could not delete bonus - [%v]", err)
+		err = fmt.Errorf("failed QUERY, could not delete bonus: - %w", err)
 		return err
 	}
 	return nil

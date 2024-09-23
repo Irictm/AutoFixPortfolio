@@ -2,8 +2,11 @@ package bonus
 
 import (
 	"fmt"
-	"log"
+
+	data "github.com/Irictm/AutoFixPortfolio/Backend/Data"
 )
+
+type Bonus = data.Bonus
 
 type IBonusRepository interface {
 	SaveBonus(Bonus) (*Bonus, error)
@@ -29,11 +32,10 @@ func (serv *BonusService) GetBonusById(id uint32) (*Bonus, error) {
 func (serv *BonusService) ConsumeBonus(brand string) (int32, error) {
 	b, err := serv.Repository.GetBonusByBrand(brand)
 	if err != nil {
-		log.Printf("Failed obtaining bonus - [%v]", err)
 		return 0, err
 	}
 	if b.Remaining <= 0 {
-		err := fmt.Errorf("No bonuses remaining for brand")
+		err := fmt.Errorf("no bonuses remaining for brand")
 		return 0, err
 	}
 	value := b.Amount
@@ -45,7 +47,6 @@ func (serv *BonusService) ConsumeBonus(brand string) (int32, error) {
 func (serv *BonusService) CheckBonus(brand string) (int32, error) {
 	b, err := serv.Repository.GetBonusByBrand(brand)
 	if err != nil {
-		log.Printf("Failed obtaining bonus - [%v]", err)
 		return 0, err
 	}
 	return b.Amount, nil

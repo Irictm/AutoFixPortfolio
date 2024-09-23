@@ -2,7 +2,7 @@ package operation
 
 import (
 	"context"
-	"log"
+	"fmt"
 
 	"github.com/jackc/pgx/v5"
 )
@@ -14,14 +14,14 @@ type OperationRepository struct {
 func (repo *OperationRepository) SaveOperation(op Operation) (*Operation, error) {
 	var operation Operation
 	err := repo.DB.QueryRow(context.Background(), "INSERT INTO operations "+
-		"(id, patent, type, date, cost, id_repair) "+
-		"VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
-		op.Id, op.Patent, op.Type, op.Date, op.Cost, op.Id_repair).Scan(
+		"(patent, type, date, cost, id_repair) "+
+		"VALUES ($1, $2, $3, $4, $5) RETURNING *",
+		op.Patent, op.Type, op.Date, op.Cost, op.Id_repair).Scan(
 		&operation.Id, &operation.Patent, &operation.Type,
 		&operation.Date, &operation.Cost, &operation.Id_repair)
 
 	if err != nil {
-		log.Printf("Failed QUERY, could not save operation - [%v]", err)
+		err = fmt.Errorf("failed QUERY, could not save operation: - %w", err)
 		return nil, err
 	}
 	return &operation, nil
@@ -32,7 +32,7 @@ func (repo *OperationRepository) GetOperationById(id uint32) (*Operation, error)
 	err := repo.DB.QueryRow(context.Background(), "SELECT * FROM operations WHERE id = $1", id).Scan(
 		&operation.Id, &operation.Patent, &operation.Type, &operation.Date, &operation.Cost, &operation.Id_repair)
 	if err != nil {
-		log.Printf("Failed QUERY, could not get operation with Id %d - [%v]", id, err)
+		err = fmt.Errorf("failed QUERY, could not get operation with Id %d: - %w", id, err)
 		return nil, err
 	}
 	return &operation, nil
@@ -43,7 +43,7 @@ func (repo *OperationRepository) GetOperationVehicleMotorType(op Operation) (str
 	err := repo.DB.QueryRow(context.Background(), "SELECT motor_type FROM vehicles WHERE patent = $1", op.Patent).Scan(
 		&motorType)
 	if err != nil {
-		log.Printf("Failed QUERY, could not get operation motor type - [%v]", err)
+		err = fmt.Errorf("failed QUERY, could not get operation motor type: - %w", err)
 		return "", err
 	}
 	return motorType, nil
@@ -53,13 +53,13 @@ func (repo *OperationRepository) GetAllOperations() ([]Operation, error) {
 	rows, err := repo.DB.Query(context.Background(),
 		"SELECT * FROM operations")
 	if err != nil {
-		log.Printf("Failed QUERY, could not get all Operations - [%v]", err)
+		err = fmt.Errorf("failed QUERY, could not get all Operations: - %w", err)
 		return nil, err
 	}
 
 	operations, err := pgx.CollectRows(rows, pgx.RowToStructByName[Operation])
 	if err != nil {
-		log.Printf("Failed Row Collection, could not get rows or parse them - [%v]", err)
+		err = fmt.Errorf("failed Row Collection, could not get rows or parse them: - %w", err)
 		return nil, err
 	}
 
@@ -70,13 +70,13 @@ func (repo *OperationRepository) GetAllOperationsByRepair(id_repair uint32) ([]O
 	rows, err := repo.DB.Query(context.Background(),
 		"SELECT * FROM operations WHERE id_repair = $1", id_repair)
 	if err != nil {
-		log.Printf("Failed QUERY, could not get all Operations by repair - [%v]", err)
+		err = fmt.Errorf("failed QUERY, could not get all Operations by repair: - %w", err)
 		return nil, err
 	}
 
 	operations, err := pgx.CollectRows(rows, pgx.RowToStructByName[Operation])
 	if err != nil {
-		log.Printf("Failed Row Collection, could not get rows or parse them - [%v]", err)
+		err = fmt.Errorf("failed Row Collection, could not get rows or parse them: - %w", err)
 		return nil, err
 	}
 
@@ -90,7 +90,7 @@ func (repo *OperationRepository) UpdateOperation(op Operation) error {
 		op.Id, op.Patent, op.Type, op.Date, op.Cost, op.Id_repair)
 
 	if err != nil {
-		log.Printf("Failed QUERY, could not update operation - [%v]", err)
+		err = fmt.Errorf("failed QUERY, could not update operation: - %w", err)
 		return err
 	}
 	return nil
@@ -101,7 +101,7 @@ func (repo *OperationRepository) DeleteOperationById(id uint32) error {
 		"WHERE id = $1", id)
 
 	if err != nil {
-		log.Printf("Failed QUERY, could not delete operation - [%v]", err)
+		err = fmt.Errorf("failed QUERY, could not delete operation: - %w", err)
 		return err
 	}
 	return nil

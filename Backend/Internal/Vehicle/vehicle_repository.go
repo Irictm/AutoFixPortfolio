@@ -2,7 +2,7 @@ package vehicle
 
 import (
 	"context"
-	"log"
+	"fmt"
 
 	"github.com/jackc/pgx/v5"
 )
@@ -14,14 +14,14 @@ type VehicleRepository struct {
 func (repo *VehicleRepository) SaveVehicle(v Vehicle) (*Vehicle, error) {
 	var vehicle Vehicle
 	err := repo.DB.QueryRow(context.Background(), "INSERT INTO vehicles "+
-		"(patent, brand, model, vehicle_type, fabrication_date, motor_type, seats, mileage) "+
+		"(patent, brand, model, type, fabrication_date, motor_type, seats, mileage) "+
 		"VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *",
-		v.Patent, v.Brand, v.Model, v.VehicleType, v.FabricationDate, v.MotorType, v.Seats, v.Mileage).Scan(
-		&vehicle.Id, &vehicle.Patent, &vehicle.Brand, &vehicle.Model, &vehicle.VehicleType,
+		v.Patent, v.Brand, v.Model, v.Type, v.FabricationDate, v.MotorType, v.Seats, v.Mileage).Scan(
+		&vehicle.Id, &vehicle.Patent, &vehicle.Brand, &vehicle.Model, &vehicle.Type,
 		&vehicle.FabricationDate, &vehicle.MotorType, &vehicle.Seats, &vehicle.Mileage)
 
 	if err != nil {
-		log.Printf("Failed QUERY, could not save vehicle - [%v]", err)
+		err = fmt.Errorf("failed QUERY, could not save vehicle: - %w", err)
 		return nil, err
 	}
 	return &vehicle, nil
@@ -30,10 +30,10 @@ func (repo *VehicleRepository) SaveVehicle(v Vehicle) (*Vehicle, error) {
 func (repo *VehicleRepository) GetVehicleById(id uint32) (*Vehicle, error) {
 	var vehicle Vehicle
 	err := repo.DB.QueryRow(context.Background(), "SELECT * FROM vehicles WHERE id = $1", id).Scan(
-		&vehicle.Id, &vehicle.Patent, &vehicle.Brand, &vehicle.Model, &vehicle.VehicleType,
+		&vehicle.Id, &vehicle.Patent, &vehicle.Brand, &vehicle.Model, &vehicle.Type,
 		&vehicle.FabricationDate, &vehicle.MotorType, &vehicle.Seats, &vehicle.Mileage)
 	if err != nil {
-		log.Printf("Failed QUERY, could not get vehicle with Id %d - [%v]", id, err)
+		err = fmt.Errorf("failed QUERY, could not get vehicle with Id %d: - %w", id, err)
 		return nil, err
 	}
 	return &vehicle, nil
@@ -43,13 +43,13 @@ func (repo *VehicleRepository) GetAllVehicles() ([]Vehicle, error) {
 	rows, err := repo.DB.Query(context.Background(),
 		"SELECT * FROM vehicles")
 	if err != nil {
-		log.Printf("Failed QUERY, could not get all Vehicles - [%v]", err)
+		err = fmt.Errorf("failed QUERY, could not get all Vehicles: - %w", err)
 		return nil, err
 	}
 
 	vehicles, err := pgx.CollectRows(rows, pgx.RowToStructByName[Vehicle])
 	if err != nil {
-		log.Printf("Failed Row Collection, could not get rows or parse them - [%v]", err)
+		err = fmt.Errorf("failed Row Collection, could not get rows or parse them: - %w", err)
 		return nil, err
 	}
 
@@ -58,12 +58,12 @@ func (repo *VehicleRepository) GetAllVehicles() ([]Vehicle, error) {
 
 func (repo *VehicleRepository) UpdateVehicle(v Vehicle) error {
 	_, err := repo.DB.Exec(context.Background(), "UPDATE vehicles "+
-		"SET patent = $2, brand = $3, model = $4, vehicle_type = $5, fabrication_date = $6, motor_type = $7, seats = $8, mileage = $9 "+
+		"SET patent = $2, brand = $3, model = $4, type = $5, fabrication_date = $6, motor_type = $7, seats = $8, mileage = $9 "+
 		"WHERE id = $1",
-		v.Id, v.Patent, v.Brand, v.Model, v.VehicleType, v.FabricationDate, v.MotorType, v.Seats, v.Mileage)
+		v.Id, v.Patent, v.Brand, v.Model, v.Type, v.FabricationDate, v.MotorType, v.Seats, v.Mileage)
 
 	if err != nil {
-		log.Printf("Failed QUERY, could not update vehicle - [%v]", err)
+		err = fmt.Errorf("failed QUERY, could not update vehicle: - %w", err)
 		return err
 	}
 	return nil
@@ -74,7 +74,7 @@ func (repo *VehicleRepository) DeleteVehicleById(id uint32) error {
 		"WHERE id = $1", id)
 
 	if err != nil {
-		log.Printf("Failed QUERY, could not delete vehicle - [%v]", err)
+		err = fmt.Errorf("failed QUERY, could not delete vehicle: - %w", err)
 		return err
 	}
 	return nil

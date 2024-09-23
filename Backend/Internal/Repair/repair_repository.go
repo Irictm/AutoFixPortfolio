@@ -2,7 +2,7 @@ package repair
 
 import (
 	"context"
-	"log"
+	"fmt"
 
 	"github.com/jackc/pgx/v5"
 )
@@ -21,7 +21,7 @@ func (repo *RepairRepository) SaveRepair(r Repair) (*Repair, error) {
 		&repair.Id_receipt, &repair.Id_vehicle)
 
 	if err != nil {
-		log.Printf("Failed QUERY, could not save repair - [%v]", err)
+		err = fmt.Errorf("failed QUERY, could not save repair: - %w", err)
 		return nil, err
 	}
 	return &repair, nil
@@ -33,7 +33,19 @@ func (repo *RepairRepository) GetRepairById(id uint32) (*Repair, error) {
 		&repair.Id, &repair.DateOfAdmission, &repair.DateOfRelease, &repair.DateOfPickUp,
 		&repair.Id_receipt, &repair.Id_vehicle)
 	if err != nil {
-		log.Printf("Failed QUERY, could not get repair with Id %d - [%v]", id, err)
+		err = fmt.Errorf("failed QUERY, could not get repair with Id %d: - %w", id, err)
+		return nil, err
+	}
+	return &repair, nil
+}
+
+func (repo *RepairRepository) GetRepairByIdReceipt(id_receipt uint32) (*Repair, error) {
+	var repair Repair
+	err := repo.DB.QueryRow(context.Background(), "SELECT * FROM repairs WHERE id_receipt = $1", id_receipt).Scan(
+		&repair.Id, &repair.DateOfAdmission, &repair.DateOfRelease, &repair.DateOfPickUp,
+		&repair.Id_receipt, &repair.Id_vehicle)
+	if err != nil {
+		err = fmt.Errorf("failed QUERY, could not get repair with Id of receipt %d: - %w", id_receipt, err)
 		return nil, err
 	}
 	return &repair, nil
@@ -43,13 +55,13 @@ func (repo *RepairRepository) GetAllRepairs() ([]Repair, error) {
 	rows, err := repo.DB.Query(context.Background(),
 		"SELECT * FROM repairs")
 	if err != nil {
-		log.Printf("Failed QUERY, could not get all Repairs - [%v]", err)
+		err = fmt.Errorf("failed QUERY, could not get all Repairs: - %w", err)
 		return nil, err
 	}
 
 	repairs, err := pgx.CollectRows(rows, pgx.RowToStructByName[Repair])
 	if err != nil {
-		log.Printf("Failed Row Collection, could not get rows or parse them - [%v]", err)
+		err = fmt.Errorf("failed Row Collection, could not get rows or parse them: - %w", err)
 		return nil, err
 	}
 
@@ -64,7 +76,7 @@ func (repo *RepairRepository) UpdateRepair(r Repair) error {
 		r.Id, r.DateOfAdmission, r.DateOfRelease, r.DateOfPickUp, r.Id_receipt, r.Id_vehicle)
 
 	if err != nil {
-		log.Printf("Failed QUERY, could not update repair - [%v]", err)
+		err = fmt.Errorf("failed QUERY, could not update repair: - %w", err)
 		return err
 	}
 	return nil
@@ -75,7 +87,7 @@ func (repo *RepairRepository) DeleteRepairById(id uint32) error {
 		"WHERE id = $1", id)
 
 	if err != nil {
-		log.Printf("Failed QUERY, could not delete repair - [%v]", err)
+		err = fmt.Errorf("failed QUERY, could not delete repair: - %w", err)
 		return err
 	}
 	return nil

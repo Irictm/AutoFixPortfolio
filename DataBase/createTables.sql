@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS public.vehicles
     patent text,
     brand text,
     model text,
-    vehicle_type text,
+    type text,
     fabrication_date timestamp with time zone,
     motor_type text,
     seats smallint,
@@ -52,6 +52,7 @@ CREATE TABLE IF NOT EXISTS public.receipts
     discount_amount integer,
     iva_amount integer,
     total_amount integer,
+    bonus_consumed boolean,
     CONSTRAINT receipts_pkey PRIMARY KEY (id)
 )
 
@@ -114,7 +115,8 @@ CREATE TABLE IF NOT EXISTS public.tariff_operations
     id bigint NOT NULL DEFAULT nextval('tariff_operations_id_seq'::regclass),
     motor_type text,
     operation_type text,
-    value integer
+    value double precision,
+    CONSTRAINT tariff_operations_pkey PRIMARY KEY (id)
 )
 
 TABLESPACE pg_default;
@@ -132,7 +134,8 @@ CREATE TABLE IF NOT EXISTS public.tariff_repair_number
     id bigint NOT NULL DEFAULT nextval('tariff_repair_number_id_seq'::regclass),
     motor_type text,
     repair_number_interval text,
-    value integer
+    value double precision,
+    CONSTRAINT tariff_repair_number_pkey PRIMARY KEY (id)
 )
 
 TABLESPACE pg_default;
@@ -150,7 +153,8 @@ CREATE TABLE IF NOT EXISTS public.tariff_mileage
     id bigint NOT NULL DEFAULT nextval('tariff_mileage_id_seq'::regclass),
     vehicle_type text,
     mileage_interval text,
-    value integer
+    value double precision,
+    CONSTRAINT tariff_mileage_pkey PRIMARY KEY (id)
 )
 
 TABLESPACE pg_default;
@@ -168,7 +172,8 @@ CREATE TABLE IF NOT EXISTS public.tariff_antiquety
     id bigint NOT NULL DEFAULT nextval('tariff_antiquety_id_seq'::regclass),
     vehicle_type text,
     antiquety_interval text,
-    value integer
+    value double precision,
+    CONSTRAINT tariff_antiquety_pkey PRIMARY KEY (id)
 )
 
 TABLESPACE pg_default;

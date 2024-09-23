@@ -1,5 +1,9 @@
 package vehicle
 
+import data "github.com/Irictm/AutoFixPortfolio/Backend/Data"
+
+type Vehicle = data.Vehicle
+
 type IVehicleRepository interface {
 	SaveVehicle(Vehicle) (*Vehicle, error)
 	GetVehicleById(uint32) (*Vehicle, error)

@@ -13,6 +13,7 @@ type IReceiptService interface {
 	GetReceiptById(uint32) (*Receipt, error)
 	GetAllReceipts() ([]Receipt, error)
 	UpdateReceipt(Receipt) error
+	CalcTotalAmount(uint32) (*Receipt, error)
 	DeleteReceiptById(uint32) error
 }
 
@@ -24,13 +25,13 @@ func (cntrl *ReceiptController) postReceipt(c *gin.Context) {
 	var receipt Receipt
 	if err := c.BindJSON(&receipt); err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, err)
-		log.Printf("Failed parsing JSON to receipt - [%v]", err)
+		log.Printf("failed parsing JSON to receipt: - %v", err)
 		return
 	}
 	newReceipt, err := cntrl.Service.SaveReceipt(receipt)
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, err)
-		log.Printf("Failed saving receipt - [%v]", err)
+		log.Printf("failed saving receipt: - %v", err)
 		return
 	}
 	c.IndentedJSON(http.StatusOK, newReceipt)
@@ -40,14 +41,14 @@ func (cntrl *ReceiptController) getReceiptById(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.IndentedJSON(http.StatusBadRequest, nil)
-		log.Printf("Failed parsing id to uint - [%v]", err)
+		log.Printf("failed parsing id to uint: - %v", err)
 		return
 	}
 
 	receipt, err := cntrl.Service.GetReceiptById(uint32(id))
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, err)
-		log.Printf("Failed getting receipt with id %d - [%v]", id, err)
+		log.Printf("failed getting receipt with id %d: - %v", id, err)
 		return
 	}
 	c.IndentedJSON(http.StatusOK, receipt)
@@ -57,7 +58,7 @@ func (cntrl *ReceiptController) getAllReceipts(c *gin.Context) {
 	receipts, err := cntrl.Service.GetAllReceipts()
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, err)
-		log.Printf("Failed getting all receipts - [%v]", err)
+		log.Printf("failed getting all receipts: - %v", err)
 		return
 	}
 	c.IndentedJSON(http.StatusOK, receipts)
@@ -67,29 +68,45 @@ func (cntrl *ReceiptController) updateReceipt(c *gin.Context) {
 	var receipt Receipt
 	if err := c.BindJSON(&receipt); err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, err)
-		log.Printf("Failed parsing JSON to receipt - [%v]", err)
+		log.Printf("failed parsing JSON to receipt: - %v", err)
 		return
 	}
 	if err := cntrl.Service.UpdateReceipt(receipt); err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, err)
-		log.Printf("Failed updating receipt - [%v]", err)
+		log.Printf("failed updating receipt: - %v", err)
 		return
 	}
 	c.IndentedJSON(http.StatusOK, receipt)
+}
+
+func (cntrl *ReceiptController) calcTotalCostReceipt(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.IndentedJSON(http.StatusBadRequest, nil)
+		log.Printf("failed parsing id to uint: - %v", err)
+		return
+	}
+	newReceipt, err := cntrl.Service.CalcTotalAmount(uint32(id))
+	if err != nil {
+		c.IndentedJSON(http.StatusInternalServerError, err)
+		log.Printf("failed calculating total value receipt: - %v", err)
+		return
+	}
+	c.IndentedJSON(http.StatusOK, newReceipt)
 }
 
 func (cntrl *ReceiptController) deleteReceiptById(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, err)
-		log.Printf("Failed parsing id to uint - [%v]", err)
+		log.Printf("failed parsing id to uint: - %v", err)
 		return
 	}
 
 	err = cntrl.Service.DeleteReceiptById(uint32(id))
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, err)
-		log.Printf("Failed deleting receipt with id %d - [%v]", id, err)
+		log.Printf("failed deleting receipt with id %d: - %v", id, err)
 		return
 	}
 	c.IndentedJSON(http.StatusOK, nil)
@@ -100,5 +117,6 @@ func (cntrl *ReceiptController) LinkPaths(rout *gin.Engine) {
 	rout.GET("/receipts/:id", cntrl.getReceiptById)
 	rout.GET("/receipts", cntrl.getAllReceipts)
 	rout.PUT("/receipts", cntrl.updateReceipt)
+	rout.PUT("/receipts/calculate/:id", cntrl.calcTotalCostReceipt)
 	rout.DELETE("/receipts/:id", cntrl.deleteReceiptById)
 }

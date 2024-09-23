@@ -1,4 +1,4 @@
-package vehicle
+package data
 
 import "time"
 
@@ -7,9 +7,9 @@ type Vehicle struct {
 	Patent          string
 	Brand           string
 	Model           string
-	VehicleType     string
+	Type            string
 	FabricationDate time.Time
 	MotorType       string
 	Seats           uint8
-	Mileage         float32
+	Mileage         int32
 }

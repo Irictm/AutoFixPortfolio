@@ -1,4 +1,4 @@
-package receipt
+package data
 
 type Receipt struct {
 	Id               uint32
@@ -7,4 +7,5 @@ type Receipt struct {
 	DiscountAmount   int32
 	IvaAmount        int32
 	TotalAmount      int32
+	BonusConsumed    bool
 }
