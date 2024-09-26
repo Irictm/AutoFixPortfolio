@@ -7,11 +7,11 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-type VehicleRepository struct {
+type Repository struct {
 	DB *pgx.Conn
 }
 
-func (repo *VehicleRepository) SaveVehicle(v Vehicle) (*Vehicle, error) {
+func (repo *Repository) SaveVehicle(v Vehicle) (*Vehicle, error) {
 	var vehicle Vehicle
 	err := repo.DB.QueryRow(context.Background(), "INSERT INTO vehicles "+
 		"(patent, brand, model, type, fabrication_date, motor_type, seats, mileage) "+
@@ -27,7 +27,7 @@ func (repo *VehicleRepository) SaveVehicle(v Vehicle) (*Vehicle, error) {
 	return &vehicle, nil
 }
 
-func (repo *VehicleRepository) GetVehicleById(id uint32) (*Vehicle, error) {
+func (repo *Repository) GetVehicleById(id uint32) (*Vehicle, error) {
 	var vehicle Vehicle
 	err := repo.DB.QueryRow(context.Background(), "SELECT * FROM vehicles WHERE id = $1", id).Scan(
 		&vehicle.Id, &vehicle.Patent, &vehicle.Brand, &vehicle.Model, &vehicle.Type,
@@ -39,7 +39,7 @@ func (repo *VehicleRepository) GetVehicleById(id uint32) (*Vehicle, error) {
 	return &vehicle, nil
 }
 
-func (repo *VehicleRepository) GetAllVehicles() ([]Vehicle, error) {
+func (repo *Repository) GetAllVehicles() ([]Vehicle, error) {
 	rows, err := repo.DB.Query(context.Background(),
 		"SELECT * FROM vehicles")
 	if err != nil {
@@ -56,7 +56,7 @@ func (repo *VehicleRepository) GetAllVehicles() ([]Vehicle, error) {
 	return vehicles, nil
 }
 
-func (repo *VehicleRepository) UpdateVehicle(v Vehicle) error {
+func (repo *Repository) UpdateVehicle(v Vehicle) error {
 	_, err := repo.DB.Exec(context.Background(), "UPDATE vehicles "+
 		"SET patent = $2, brand = $3, model = $4, type = $5, fabrication_date = $6, motor_type = $7, seats = $8, mileage = $9 "+
 		"WHERE id = $1",
@@ -69,7 +69,7 @@ func (repo *VehicleRepository) UpdateVehicle(v Vehicle) error {
 	return nil
 }
 
-func (repo *VehicleRepository) DeleteVehicleById(id uint32) error {
+func (repo *Repository) DeleteVehicleById(id uint32) error {
 	_, err := repo.DB.Exec(context.Background(), "DELETE FROM vehicles "+
 		"WHERE id = $1", id)
 

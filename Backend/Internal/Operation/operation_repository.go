@@ -7,17 +7,17 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-type OperationRepository struct {
+type Repository struct {
 	DB *pgx.Conn
 }
 
-func (repo *OperationRepository) SaveOperation(op Operation) (*Operation, error) {
+func (repo *Repository) SaveOperation(op Operation) (*Operation, error) {
 	var operation Operation
 	err := repo.DB.QueryRow(context.Background(), "INSERT INTO operations "+
-		"(patent, type, date, cost, id_repair) "+
+		"(patent, id_operation_type, date, cost, id_repair) "+
 		"VALUES ($1, $2, $3, $4, $5) RETURNING *",
-		op.Patent, op.Type, op.Date, op.Cost, op.Id_repair).Scan(
-		&operation.Id, &operation.Patent, &operation.Type,
+		op.Patent, op.Id_operation_type, op.Date, op.Cost, op.Id_repair).Scan(
+		&operation.Id, &operation.Patent, &operation.Id_operation_type,
 		&operation.Date, &operation.Cost, &operation.Id_repair)
 
 	if err != nil {
@@ -27,10 +27,10 @@ func (repo *OperationRepository) SaveOperation(op Operation) (*Operation, error)
 	return &operation, nil
 }
 
-func (repo *OperationRepository) GetOperationById(id uint32) (*Operation, error) {
+func (repo *Repository) GetOperationById(id uint32) (*Operation, error) {
 	var operation Operation
 	err := repo.DB.QueryRow(context.Background(), "SELECT * FROM operations WHERE id = $1", id).Scan(
-		&operation.Id, &operation.Patent, &operation.Type, &operation.Date, &operation.Cost, &operation.Id_repair)
+		&operation.Id, &operation.Patent, &operation.Id_operation_type, &operation.Date, &operation.Cost, &operation.Id_repair)
 	if err != nil {
 		err = fmt.Errorf("failed QUERY, could not get operation with Id %d: - %w", id, err)
 		return nil, err
@@ -38,7 +38,7 @@ func (repo *OperationRepository) GetOperationById(id uint32) (*Operation, error)
 	return &operation, nil
 }
 
-func (repo *OperationRepository) GetOperationVehicleMotorType(op Operation) (string, error) {
+func (repo *Repository) GetOperationVehicleMotorType(op Operation) (string, error) {
 	var motorType string
 	err := repo.DB.QueryRow(context.Background(), "SELECT motor_type FROM vehicles WHERE patent = $1", op.Patent).Scan(
 		&motorType)
@@ -49,7 +49,7 @@ func (repo *OperationRepository) GetOperationVehicleMotorType(op Operation) (str
 	return motorType, nil
 }
 
-func (repo *OperationRepository) GetAllOperations() ([]Operation, error) {
+func (repo *Repository) GetAllOperations() ([]Operation, error) {
 	rows, err := repo.DB.Query(context.Background(),
 		"SELECT * FROM operations")
 	if err != nil {
@@ -66,7 +66,7 @@ func (repo *OperationRepository) GetAllOperations() ([]Operation, error) {
 	return operations, nil
 }
 
-func (repo *OperationRepository) GetAllOperationsByRepair(id_repair uint32) ([]Operation, error) {
+func (repo *Repository) GetAllOperationsByRepair(id_repair uint32) ([]Operation, error) {
 	rows, err := repo.DB.Query(context.Background(),
 		"SELECT * FROM operations WHERE id_repair = $1", id_repair)
 	if err != nil {
@@ -83,11 +83,11 @@ func (repo *OperationRepository) GetAllOperationsByRepair(id_repair uint32) ([]O
 	return operations, nil
 }
 
-func (repo *OperationRepository) UpdateOperation(op Operation) error {
+func (repo *Repository) UpdateOperation(op Operation) error {
 	_, err := repo.DB.Exec(context.Background(), "UPDATE operations "+
-		"SET brand = $2, type = $3, date = $4, cost = $5, id_repair = $6"+
+		"SET brand = $2, id_operation_type = $3, date = $4, cost = $5, id_repair = $6"+
 		"WHERE id = $1",
-		op.Id, op.Patent, op.Type, op.Date, op.Cost, op.Id_repair)
+		op.Id, op.Patent, op.Id_operation_type, op.Date, op.Cost, op.Id_repair)
 
 	if err != nil {
 		err = fmt.Errorf("failed QUERY, could not update operation: - %w", err)
@@ -96,7 +96,7 @@ func (repo *OperationRepository) UpdateOperation(op Operation) error {
 	return nil
 }
 
-func (repo *OperationRepository) DeleteOperationById(id uint32) error {
+func (repo *Repository) DeleteOperationById(id uint32) error {
 	_, err := repo.DB.Exec(context.Background(), "DELETE FROM operations "+
 		"WHERE id = $1", id)
 

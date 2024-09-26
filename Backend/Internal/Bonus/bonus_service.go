@@ -17,19 +17,19 @@ type IBonusRepository interface {
 	DeleteBonusById(uint32) error
 }
 
-type BonusService struct {
+type Service struct {
 	Repository IBonusRepository
 }
 
-func (serv *BonusService) SaveBonus(b Bonus) (*Bonus, error) {
+func (serv *Service) SaveBonus(b Bonus) (*Bonus, error) {
 	return serv.Repository.SaveBonus(b)
 }
 
-func (serv *BonusService) GetBonusById(id uint32) (*Bonus, error) {
+func (serv *Service) GetBonusById(id uint32) (*Bonus, error) {
 	return serv.Repository.GetBonusById(id)
 }
 
-func (serv *BonusService) ConsumeBonus(brand string) (int32, error) {
+func (serv *Service) ConsumeBonus(brand string) (int32, error) {
 	b, err := serv.Repository.GetBonusByBrand(brand)
 	if err != nil {
 		return 0, err
@@ -44,7 +44,7 @@ func (serv *BonusService) ConsumeBonus(brand string) (int32, error) {
 	return value, nil
 }
 
-func (serv *BonusService) CheckBonus(brand string) (int32, error) {
+func (serv *Service) CheckBonus(brand string) (int32, error) {
 	b, err := serv.Repository.GetBonusByBrand(brand)
 	if err != nil {
 		return 0, err
@@ -52,14 +52,14 @@ func (serv *BonusService) CheckBonus(brand string) (int32, error) {
 	return b.Amount, nil
 }
 
-func (serv *BonusService) GetAllBonuses() ([]Bonus, error) {
+func (serv *Service) GetAllBonuses() ([]Bonus, error) {
 	return serv.Repository.GetAllBonuses()
 }
 
-func (serv *BonusService) UpdateBonus(b Bonus) error {
+func (serv *Service) UpdateBonus(b Bonus) error {
 	return serv.Repository.UpdateBonus(b)
 }
 
-func (serv *BonusService) DeleteBonusById(id uint32) error {
+func (serv *Service) DeleteBonusById(id uint32) error {
 	return serv.Repository.DeleteBonusById(id)
 }

@@ -16,11 +16,11 @@ type IOperationService interface {
 	DeleteOperationById(uint32) error
 }
 
-type OperationController struct {
+type Controller struct {
 	Service IOperationService
 }
 
-func (cntrl *OperationController) postOperation(c *gin.Context) {
+func (cntrl *Controller) postOperation(c *gin.Context) {
 	var operation Operation
 	if err := c.BindJSON(&operation); err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, err)
@@ -36,7 +36,7 @@ func (cntrl *OperationController) postOperation(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, newOperation)
 }
 
-func (cntrl *OperationController) getOperationById(c *gin.Context) {
+func (cntrl *Controller) getOperationById(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.IndentedJSON(http.StatusBadRequest, nil)
@@ -53,7 +53,7 @@ func (cntrl *OperationController) getOperationById(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, operation)
 }
 
-func (cntrl *OperationController) getAllOperations(c *gin.Context) {
+func (cntrl *Controller) getAllOperations(c *gin.Context) {
 	operations, err := cntrl.Service.GetAllOperations()
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, err)
@@ -63,7 +63,7 @@ func (cntrl *OperationController) getAllOperations(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, operations)
 }
 
-func (cntrl *OperationController) updateOperation(c *gin.Context) {
+func (cntrl *Controller) updateOperation(c *gin.Context) {
 	var operation Operation
 	if err := c.BindJSON(&operation); err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, err)
@@ -78,7 +78,7 @@ func (cntrl *OperationController) updateOperation(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, operation)
 }
 
-func (cntrl *OperationController) deleteOperationById(c *gin.Context) {
+func (cntrl *Controller) deleteOperationById(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, err)
@@ -95,7 +95,7 @@ func (cntrl *OperationController) deleteOperationById(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, nil)
 }
 
-func (cntrl *OperationController) LinkPaths(rout *gin.Engine) {
+func (cntrl *Controller) LinkPaths(rout *gin.Engine) {
 	rout.POST("/operations", cntrl.postOperation)
 	rout.GET("/operations/:id", cntrl.getOperationById)
 	rout.GET("/operations", cntrl.getAllOperations)

@@ -16,11 +16,11 @@ type IBonusService interface {
 	DeleteBonusById(uint32) error
 }
 
-type BonusController struct {
+type Controller struct {
 	Service IBonusService
 }
 
-func (cntrl *BonusController) postBonus(c *gin.Context) {
+func (cntrl *Controller) postBonus(c *gin.Context) {
 	var bonus Bonus
 	if err := c.BindJSON(&bonus); err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, err)
@@ -36,7 +36,7 @@ func (cntrl *BonusController) postBonus(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, newBonus)
 }
 
-func (cntrl *BonusController) getBonusById(c *gin.Context) {
+func (cntrl *Controller) getBonusById(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.IndentedJSON(http.StatusBadRequest, nil)
@@ -53,7 +53,7 @@ func (cntrl *BonusController) getBonusById(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, bonus)
 }
 
-func (cntrl *BonusController) getAllBonuses(c *gin.Context) {
+func (cntrl *Controller) getAllBonuses(c *gin.Context) {
 	bonuss, err := cntrl.Service.GetAllBonuses()
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, err)
@@ -63,7 +63,7 @@ func (cntrl *BonusController) getAllBonuses(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, bonuss)
 }
 
-func (cntrl *BonusController) updateBonus(c *gin.Context) {
+func (cntrl *Controller) updateBonus(c *gin.Context) {
 	var bonus Bonus
 	if err := c.BindJSON(&bonus); err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, err)
@@ -78,7 +78,7 @@ func (cntrl *BonusController) updateBonus(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, bonus)
 }
 
-func (cntrl *BonusController) deleteBonusById(c *gin.Context) {
+func (cntrl *Controller) deleteBonusById(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, err)
@@ -95,7 +95,7 @@ func (cntrl *BonusController) deleteBonusById(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, nil)
 }
 
-func (cntrl *BonusController) LinkPaths(rout *gin.Engine) {
+func (cntrl *Controller) LinkPaths(rout *gin.Engine) {
 	rout.POST("/bonuses", cntrl.postBonus)
 	rout.GET("/bonuses/:id", cntrl.getBonusById)
 	rout.GET("/bonuses", cntrl.getAllBonuses)

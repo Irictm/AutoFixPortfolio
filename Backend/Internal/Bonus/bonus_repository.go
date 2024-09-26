@@ -7,11 +7,11 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-type BonusRepository struct {
+type Repository struct {
 	DB *pgx.Conn
 }
 
-func (repo *BonusRepository) SaveBonus(b Bonus) (*Bonus, error) {
+func (repo *Repository) SaveBonus(b Bonus) (*Bonus, error) {
 	var bonus Bonus
 	err := repo.DB.QueryRow(context.Background(), "INSERT INTO bonuses "+
 		"(brand, remaining, amount) "+
@@ -26,7 +26,7 @@ func (repo *BonusRepository) SaveBonus(b Bonus) (*Bonus, error) {
 	return &bonus, nil
 }
 
-func (repo *BonusRepository) GetBonusById(id uint32) (*Bonus, error) {
+func (repo *Repository) GetBonusById(id uint32) (*Bonus, error) {
 	var bonus Bonus
 	err := repo.DB.QueryRow(context.Background(), "SELECT * FROM bonuses WHERE id = $1", id).Scan(
 		&bonus.Id, &bonus.Brand, &bonus.Remaining, &bonus.Amount)
@@ -38,7 +38,7 @@ func (repo *BonusRepository) GetBonusById(id uint32) (*Bonus, error) {
 	return &bonus, nil
 }
 
-func (repo *BonusRepository) GetBonusByBrand(brand string) (*Bonus, error) {
+func (repo *Repository) GetBonusByBrand(brand string) (*Bonus, error) {
 	var bonus Bonus
 	err := repo.DB.QueryRow(context.Background(), "SELECT * FROM bonuses WHERE brand = $1", brand).Scan(
 		&bonus.Id, &bonus.Brand, &bonus.Remaining, &bonus.Amount)
@@ -50,7 +50,7 @@ func (repo *BonusRepository) GetBonusByBrand(brand string) (*Bonus, error) {
 	return &bonus, nil
 }
 
-func (repo *BonusRepository) GetAllBonuses() ([]Bonus, error) {
+func (repo *Repository) GetAllBonuses() ([]Bonus, error) {
 	rows, err := repo.DB.Query(context.Background(),
 		"SELECT * FROM bonuses")
 	if err != nil {
@@ -67,7 +67,7 @@ func (repo *BonusRepository) GetAllBonuses() ([]Bonus, error) {
 	return bonuses, nil
 }
 
-func (repo *BonusRepository) UpdateBonus(b Bonus) error {
+func (repo *Repository) UpdateBonus(b Bonus) error {
 	_, err := repo.DB.Exec(context.Background(), "UPDATE bonuses "+
 		"SET brand = $2, remaining = $3, amount = $4 "+
 		"WHERE id = $1",
@@ -80,7 +80,7 @@ func (repo *BonusRepository) UpdateBonus(b Bonus) error {
 	return nil
 }
 
-func (repo *BonusRepository) DeleteBonusById(id uint32) error {
+func (repo *Repository) DeleteBonusById(id uint32) error {
 	_, err := repo.DB.Exec(context.Background(), "DELETE FROM bonuses "+
 		"WHERE id = $1", id)
 

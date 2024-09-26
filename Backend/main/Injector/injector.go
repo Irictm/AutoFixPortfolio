@@ -9,6 +9,10 @@ import (
 	receipt "github.com/Irictm/AutoFixPortfolio/Backend/Internal/Receipt"
 	repair "github.com/Irictm/AutoFixPortfolio/Backend/Internal/Repair"
 	tariff "github.com/Irictm/AutoFixPortfolio/Backend/Internal/Tariffs"
+	tariffAntiquity "github.com/Irictm/AutoFixPortfolio/Backend/Internal/Tariffs/TariffAntiquity"
+	tariffMileage "github.com/Irictm/AutoFixPortfolio/Backend/Internal/Tariffs/TariffMileage"
+	tariffOperations "github.com/Irictm/AutoFixPortfolio/Backend/Internal/Tariffs/TariffOperations"
+	tariffRepairNumber "github.com/Irictm/AutoFixPortfolio/Backend/Internal/Tariffs/TariffRepairNumber"
 	vehicle "github.com/Irictm/AutoFixPortfolio/Backend/Internal/Vehicle"
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5"
@@ -19,36 +23,54 @@ func InjectDependencies(rout *gin.Engine) {
 	if err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
-	vehicleRepository := &vehicle.VehicleRepository{DB: db}
-	vehicleService := &vehicle.VehicleService{Repository: vehicleRepository}
-	vehicleController := vehicle.VehicleController{Service: vehicleService}
+	vehicleRepository := &vehicle.Repository{DB: db}
+	vehicleService := &vehicle.Service{Repository: vehicleRepository}
+	vehicleController := vehicle.Controller{Service: vehicleService}
 	vehicleController.LinkPaths(rout)
 
-	tariffRepository := &tariff.TariffRepository{DB: db}
-	tariffService := &tariff.TariffService{Repository: tariffRepository}
-	tariffController := tariff.TariffController{Service: tariffService}
-	tariffController.LinkPaths(rout)
+	tariffAntiquityRepository := tariffAntiquity.Repository{DB: db}
+	tariffAntiquityService := tariffAntiquity.Service{Repository: &tariffAntiquityRepository}
+	tariffAntiquityController := tariffAntiquity.Controller{Service: &tariffAntiquityService}
+	tariffAntiquityController.LinkPaths(rout)
 
-	operationRepository := &operation.OperationRepository{DB: db}
-	operationService := &operation.OperationService{Repository: operationRepository, TarService: tariffService}
-	operationController := operation.OperationController{Service: operationService}
+	tariffMileageRepository := tariffMileage.Repository{DB: db}
+	tariffMileageService := tariffMileage.Service{Repository: &tariffMileageRepository}
+	tariffMileageController := tariffMileage.Controller{Service: &tariffMileageService}
+	tariffMileageController.LinkPaths(rout)
+
+	tariffOperationsRepository := tariffOperations.Repository{DB: db}
+	tariffOperationsService := tariffOperations.Service{Repository: &tariffOperationsRepository}
+	tariffOperationsController := tariffOperations.Controller{Service: &tariffOperationsService}
+	tariffOperationsController.LinkPaths(rout)
+
+	tariffRepairNumberRepository := tariffRepairNumber.Repository{DB: db}
+	tariffRepairNumberService := tariffRepairNumber.Service{Repository: &tariffRepairNumberRepository}
+	tariffRepairNumberController := tariffRepairNumber.Controller{Service: &tariffRepairNumberService}
+	tariffRepairNumberController.LinkPaths(rout)
+
+	tariffService := &tariff.TariffService{TariffAntiquity: &tariffAntiquityService, TariffMileage: &tariffMileageService,
+		TariffOperations: &tariffOperationsService, TariffRepairNumber: &tariffRepairNumberService}
+
+	operationRepository := &operation.Repository{DB: db}
+	operationService := &operation.Service{Repository: operationRepository, TarService: tariffService}
+	operationController := operation.Controller{Service: operationService}
 	operationController.LinkPaths(rout)
 
-	repairRepository := &repair.RepairRepository{DB: db}
-	repairService := &repair.RepairService{Repository: repairRepository}
-	repairController := repair.RepairController{Service: repairService}
+	repairRepository := &repair.Repository{DB: db}
+	repairService := &repair.Service{Repository: repairRepository}
+	repairController := repair.Controller{Service: repairService}
 	repairController.LinkPaths(rout)
 
-	bonusRepository := &bonus.BonusRepository{DB: db}
-	bonusService := &bonus.BonusService{Repository: bonusRepository}
-	bonusController := bonus.BonusController{Service: bonusService}
+	bonusRepository := &bonus.Repository{DB: db}
+	bonusService := &bonus.Service{Repository: bonusRepository}
+	bonusController := bonus.Controller{Service: bonusService}
 	bonusController.LinkPaths(rout)
 
-	receiptRepository := &receipt.ReceiptRepository{DB: db}
-	receiptService := &receipt.ReceiptService{Repository: receiptRepository, BonusService: bonusService,
+	receiptRepository := &receipt.Repository{DB: db}
+	receiptService := &receipt.Service{Repository: receiptRepository, BonusService: bonusService,
 		RepairService: repairService, OperationService: operationService, TariffService: tariffService,
 		VehicleService: vehicleService}
-	receiptController := receipt.ReceiptController{Service: receiptService}
+	receiptController := receipt.Controller{Service: receiptService}
 	receiptController.LinkPaths(rout)
 }
 

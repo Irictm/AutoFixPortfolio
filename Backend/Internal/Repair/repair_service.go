@@ -13,30 +13,30 @@ type IRepairRepository interface {
 	DeleteRepairById(uint32) error
 }
 
-type RepairService struct {
+type Service struct {
 	Repository IRepairRepository
 }
 
-func (serv *RepairService) SaveRepair(r Repair) (*Repair, error) {
+func (serv *Service) SaveRepair(r Repair) (*Repair, error) {
 	return serv.Repository.SaveRepair(r)
 }
 
-func (serv *RepairService) GetRepairById(id uint32) (*Repair, error) {
+func (serv *Service) GetRepairById(id uint32) (*Repair, error) {
 	return serv.Repository.GetRepairById(id)
 }
 
-func (serv *RepairService) GetRepairByIdReceipt(id_receipt uint32) (*Repair, error) {
+func (serv *Service) GetRepairByIdReceipt(id_receipt uint32) (*Repair, error) {
 	return serv.Repository.GetRepairByIdReceipt(id_receipt)
 }
 
-func (serv *RepairService) GetAllRepairs() ([]Repair, error) {
+func (serv *Service) GetAllRepairs() ([]Repair, error) {
 	return serv.Repository.GetAllRepairs()
 }
 
-func (serv *RepairService) UpdateRepair(r Repair) error {
+func (serv *Service) UpdateRepair(r Repair) error {
 	return serv.Repository.UpdateRepair(r)
 }
 
-func (serv *RepairService) DeleteRepairById(id uint32) error {
+func (serv *Service) DeleteRepairById(id uint32) error {
 	return serv.Repository.DeleteRepairById(id)
 }

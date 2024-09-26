@@ -16,11 +16,11 @@ type IRepairService interface {
 	DeleteRepairById(uint32) error
 }
 
-type RepairController struct {
+type Controller struct {
 	Service IRepairService
 }
 
-func (cntrl *RepairController) postRepair(c *gin.Context) {
+func (cntrl *Controller) postRepair(c *gin.Context) {
 	var repair Repair
 	if err := c.BindJSON(&repair); err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, err)
@@ -36,7 +36,7 @@ func (cntrl *RepairController) postRepair(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, newRepair)
 }
 
-func (cntrl *RepairController) getRepairById(c *gin.Context) {
+func (cntrl *Controller) getRepairById(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.IndentedJSON(http.StatusBadRequest, nil)
@@ -53,7 +53,7 @@ func (cntrl *RepairController) getRepairById(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, repair)
 }
 
-func (cntrl *RepairController) getAllRepairs(c *gin.Context) {
+func (cntrl *Controller) getAllRepairs(c *gin.Context) {
 	repairs, err := cntrl.Service.GetAllRepairs()
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, err)
@@ -63,7 +63,7 @@ func (cntrl *RepairController) getAllRepairs(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, repairs)
 }
 
-func (cntrl *RepairController) updateRepair(c *gin.Context) {
+func (cntrl *Controller) updateRepair(c *gin.Context) {
 	var repair Repair
 	if err := c.BindJSON(&repair); err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, err)
@@ -78,7 +78,7 @@ func (cntrl *RepairController) updateRepair(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, repair)
 }
 
-func (cntrl *RepairController) deleteRepairById(c *gin.Context) {
+func (cntrl *Controller) deleteRepairById(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, err)
@@ -95,7 +95,7 @@ func (cntrl *RepairController) deleteRepairById(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, nil)
 }
 
-func (cntrl *RepairController) LinkPaths(rout *gin.Engine) {
+func (cntrl *Controller) LinkPaths(rout *gin.Engine) {
 	rout.POST("/repairs", cntrl.postRepair)
 	rout.GET("/repairs/:id", cntrl.getRepairById)
 	rout.GET("/repairs", cntrl.getAllRepairs)

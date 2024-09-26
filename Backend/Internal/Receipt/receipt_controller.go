@@ -17,11 +17,11 @@ type IReceiptService interface {
 	DeleteReceiptById(uint32) error
 }
 
-type ReceiptController struct {
+type Controller struct {
 	Service IReceiptService
 }
 
-func (cntrl *ReceiptController) postReceipt(c *gin.Context) {
+func (cntrl *Controller) postReceipt(c *gin.Context) {
 	var receipt Receipt
 	if err := c.BindJSON(&receipt); err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, err)
@@ -37,7 +37,7 @@ func (cntrl *ReceiptController) postReceipt(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, newReceipt)
 }
 
-func (cntrl *ReceiptController) getReceiptById(c *gin.Context) {
+func (cntrl *Controller) getReceiptById(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.IndentedJSON(http.StatusBadRequest, nil)
@@ -54,7 +54,7 @@ func (cntrl *ReceiptController) getReceiptById(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, receipt)
 }
 
-func (cntrl *ReceiptController) getAllReceipts(c *gin.Context) {
+func (cntrl *Controller) getAllReceipts(c *gin.Context) {
 	receipts, err := cntrl.Service.GetAllReceipts()
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, err)
@@ -64,7 +64,7 @@ func (cntrl *ReceiptController) getAllReceipts(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, receipts)
 }
 
-func (cntrl *ReceiptController) updateReceipt(c *gin.Context) {
+func (cntrl *Controller) updateReceipt(c *gin.Context) {
 	var receipt Receipt
 	if err := c.BindJSON(&receipt); err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, err)
@@ -79,7 +79,7 @@ func (cntrl *ReceiptController) updateReceipt(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, receipt)
 }
 
-func (cntrl *ReceiptController) calcTotalCostReceipt(c *gin.Context) {
+func (cntrl *Controller) calcTotalCostReceipt(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.IndentedJSON(http.StatusBadRequest, nil)
@@ -95,7 +95,7 @@ func (cntrl *ReceiptController) calcTotalCostReceipt(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, newReceipt)
 }
 
-func (cntrl *ReceiptController) deleteReceiptById(c *gin.Context) {
+func (cntrl *Controller) deleteReceiptById(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, err)
@@ -112,7 +112,7 @@ func (cntrl *ReceiptController) deleteReceiptById(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, nil)
 }
 
-func (cntrl *ReceiptController) LinkPaths(rout *gin.Engine) {
+func (cntrl *Controller) LinkPaths(rout *gin.Engine) {
 	rout.POST("/receipts", cntrl.postReceipt)
 	rout.GET("/receipts/:id", cntrl.getReceiptById)
 	rout.GET("/receipts", cntrl.getAllReceipts)

@@ -19,15 +19,15 @@ type IOperationRepository interface {
 }
 
 type ITariffService interface {
-	GetOperationTariffValue(string, string) (int32, error)
+	GetOperationTariffValue(string, uint32) (int32, error)
 }
 
-type OperationService struct {
+type Service struct {
 	Repository IOperationRepository
 	TarService ITariffService
 }
 
-func (serv *OperationService) SaveOperation(op Operation) (*Operation, error) {
+func (serv *Service) SaveOperation(op Operation) (*Operation, error) {
 	motorType, err := serv.Repository.GetOperationVehicleMotorType(op)
 	if err != nil {
 		return nil, err
@@ -42,37 +42,36 @@ func (serv *OperationService) SaveOperation(op Operation) (*Operation, error) {
 	return serv.Repository.SaveOperation(op)
 }
 
-func (serv *OperationService) GetOperationById(id uint32) (*Operation, error) {
+func (serv *Service) GetOperationById(id uint32) (*Operation, error) {
 	return serv.Repository.GetOperationById(id)
 }
 
-func (serv *OperationService) GetAllOperations() ([]Operation, error) {
+func (serv *Service) GetAllOperations() ([]Operation, error) {
 	return serv.Repository.GetAllOperations()
 }
 
-func (serv *OperationService) GetAllOperationsByRepair(id_repair uint32) ([]Operation, error) {
+func (serv *Service) GetAllOperationsByRepair(id_repair uint32) ([]Operation, error) {
 	return serv.Repository.GetAllOperationsByRepair(id_repair)
 }
 
-func (serv *OperationService) UpdateOperation(op Operation) error {
+func (serv *Service) UpdateOperation(op Operation) error {
 	return serv.Repository.UpdateOperation(op)
 }
 
-func (serv *OperationService) DeleteOperationById(id uint32) error {
+func (serv *Service) DeleteOperationById(id uint32) error {
 	return serv.Repository.DeleteOperationById(id)
 }
 
-func (serv *OperationService) calculateBaseCost(op Operation, typeOfMotor string) (int32, error) {
-	cost, err := serv.TarService.GetOperationTariffValue(typeOfMotor, op.Type)
+func (serv *Service) calculateBaseCost(op Operation, typeOfMotor string) (int32, error) {
+	cost, err := serv.TarService.GetOperationTariffValue(typeOfMotor, op.Id_operation_type)
 	if err != nil {
 		return 0, err
 	}
 	return int32(cost), nil
 }
 
-func (serv *OperationService) CalculateTotalBaseCost(id_repair uint32, typeOfMotor string) (int32, error) {
+func (serv *Service) CalculateTotalBaseCost(id_repair uint32, typeOfMotor string) (int32, error) {
 	var totalCost int32 = 0
-	cache := make(map[string]int32)
 
 	operations, err := serv.Repository.GetAllOperationsByRepair(id_repair)
 	if err != nil {
@@ -80,16 +79,11 @@ func (serv *OperationService) CalculateTotalBaseCost(id_repair uint32, typeOfMot
 	}
 
 	for _, op := range operations {
-		if cost, keyExists := cache[op.Type]; keyExists {
-			totalCost += cost
-		} else {
-			cost, err := serv.TarService.GetOperationTariffValue(typeOfMotor, op.Type)
-			if err != nil {
-				return 0, err
-			}
-			cache[op.Type] = cost
-			totalCost += cost
+		cost, err := serv.TarService.GetOperationTariffValue(typeOfMotor, op.Id_operation_type)
+		if err != nil {
+			return 0, err
 		}
+		totalCost += cost
 	}
 	return totalCost, nil
 }

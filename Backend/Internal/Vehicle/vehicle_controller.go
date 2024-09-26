@@ -16,11 +16,11 @@ type IVehicleService interface {
 	DeleteVehicleById(uint32) error
 }
 
-type VehicleController struct {
+type Controller struct {
 	Service IVehicleService
 }
 
-func (cntrl *VehicleController) postVehicle(c *gin.Context) {
+func (cntrl *Controller) postVehicle(c *gin.Context) {
 	var vehicle Vehicle
 	if err := c.BindJSON(&vehicle); err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, err)
@@ -36,7 +36,7 @@ func (cntrl *VehicleController) postVehicle(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, newVehicle)
 }
 
-func (cntrl *VehicleController) getVehicleById(c *gin.Context) {
+func (cntrl *Controller) getVehicleById(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.IndentedJSON(http.StatusBadRequest, nil)
@@ -53,7 +53,7 @@ func (cntrl *VehicleController) getVehicleById(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, vehicle)
 }
 
-func (cntrl *VehicleController) getAllVehicles(c *gin.Context) {
+func (cntrl *Controller) getAllVehicles(c *gin.Context) {
 	vehicles, err := cntrl.Service.GetAllVehicles()
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, err)
@@ -63,7 +63,7 @@ func (cntrl *VehicleController) getAllVehicles(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, vehicles)
 }
 
-func (cntrl *VehicleController) updateVehicle(c *gin.Context) {
+func (cntrl *Controller) updateVehicle(c *gin.Context) {
 	var vehicle Vehicle
 	if err := c.BindJSON(&vehicle); err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, err)
@@ -78,7 +78,7 @@ func (cntrl *VehicleController) updateVehicle(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, vehicle)
 }
 
-func (cntrl *VehicleController) deleteVehicleById(c *gin.Context) {
+func (cntrl *Controller) deleteVehicleById(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, err)
@@ -95,7 +95,7 @@ func (cntrl *VehicleController) deleteVehicleById(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, nil)
 }
 
-func (cntrl *VehicleController) LinkPaths(rout *gin.Engine) {
+func (cntrl *Controller) LinkPaths(rout *gin.Engine) {
 	rout.POST("/vehicles", cntrl.postVehicle)
 	rout.GET("/vehicles/:id", cntrl.getVehicleById)
 	rout.GET("/vehicles", cntrl.getAllVehicles)

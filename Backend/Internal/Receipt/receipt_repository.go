@@ -7,11 +7,11 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-type ReceiptRepository struct {
+type Repository struct {
 	DB *pgx.Conn
 }
 
-func (repo *ReceiptRepository) SaveReceipt(r Receipt) (*Receipt, error) {
+func (repo *Repository) SaveReceipt(r Receipt) (*Receipt, error) {
 	var receipt Receipt
 	err := repo.DB.QueryRow(context.Background(), "INSERT INTO receipts "+
 		"(operations_amount, recharge_amount, discount_amount, iva_amount, total_amount, bonus_consumed) "+
@@ -27,7 +27,7 @@ func (repo *ReceiptRepository) SaveReceipt(r Receipt) (*Receipt, error) {
 	return &receipt, nil
 }
 
-func (repo *ReceiptRepository) GetReceiptById(id uint32) (*Receipt, error) {
+func (repo *Repository) GetReceiptById(id uint32) (*Receipt, error) {
 	var receipt Receipt
 	err := repo.DB.QueryRow(context.Background(), "SELECT * FROM receipts WHERE id = $1", id).Scan(
 		&receipt.Id, &receipt.OperationsAmount, &receipt.RechargeAmount, &receipt.DiscountAmount,
@@ -39,7 +39,7 @@ func (repo *ReceiptRepository) GetReceiptById(id uint32) (*Receipt, error) {
 	return &receipt, nil
 }
 
-func (repo *ReceiptRepository) GetVehicleRepairNumberLastYear(id_vehicle uint32) (int32, error) {
+func (repo *Repository) GetVehicleRepairNumberLastYear(id_vehicle uint32) (int32, error) {
 	var repairNumberCount int32
 	err := repo.DB.QueryRow(context.Background(), "SELECT COUNT(id) FROM repairs WHERE id_vehicle = $1 AND date_of_admission BETWEEN (NOW() - INTERVAL '1 year') AND NOW()",
 		id_vehicle).Scan(&repairNumberCount)
@@ -50,7 +50,7 @@ func (repo *ReceiptRepository) GetVehicleRepairNumberLastYear(id_vehicle uint32)
 	return repairNumberCount, nil
 }
 
-func (repo *ReceiptRepository) GetAllReceipts() ([]Receipt, error) {
+func (repo *Repository) GetAllReceipts() ([]Receipt, error) {
 	rows, err := repo.DB.Query(context.Background(),
 		"SELECT * FROM receipts")
 	if err != nil {
@@ -67,10 +67,10 @@ func (repo *ReceiptRepository) GetAllReceipts() ([]Receipt, error) {
 	return receipts, nil
 }
 
-func (repo *ReceiptRepository) UpdateReceipt(r Receipt) error {
+func (repo *Repository) UpdateReceipt(r Receipt) error {
 	_, err := repo.DB.Exec(context.Background(), "UPDATE receipts "+
 		"SET operations_amount = $2, recharge_amount = $3, discount_amount = $4, "+
-		"iva_amount = $5, total_amount = $6, bonus_consumed = 7$ "+
+		"iva_amount = $5, total_amount = $6, bonus_consumed = $7 "+
 		"WHERE id = $1",
 		r.Id, r.OperationsAmount, r.RechargeAmount, r.DiscountAmount, r.IvaAmount, r.TotalAmount, r.BonusConsumed)
 
@@ -81,7 +81,7 @@ func (repo *ReceiptRepository) UpdateReceipt(r Receipt) error {
 	return nil
 }
 
-func (repo *ReceiptRepository) DeleteReceiptById(id uint32) error {
+func (repo *Repository) DeleteReceiptById(id uint32) error {
 	_, err := repo.DB.Exec(context.Background(), "DELETE FROM receipts "+
 		"WHERE id = $1", id)
 
