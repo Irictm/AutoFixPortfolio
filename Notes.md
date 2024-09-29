@@ -1,4 +1,7 @@
 # Notes
+- Trackear kilometraje del vehiculo en la reparacion misma
+- Cambiar ids de uint32 a int64
+- Manejar infinity como -1 y -infinity como -2 desde el frontend y enviar MaxInt() o MinInt() respectivamente a PostgreSQL
 - Considerar cambiar color fuente de errores a color Rojo (paquete slog?)
 - Implementar tabla extra para tipos de operacion (id, nombre)
 - Considerar envio de tarifas (enviar individualmente?, empaquetar como tabla?, csv?)
@@ -13,8 +16,8 @@ enunciado, considerado ahora como ejercicio practico)
 
 
 # TO DO Backend
+- Creacion de Tests Unitarios
+- Documentacion de metodos relevantes
 - Implementar sistema de usuarios, registro y logging
 - Agregar medidas de seguridad basicas (Anti SQL injection, JWT, etc)
-- Creacion de Tests Unitarios
-- Documentacion
 - Implementacion de Reportes sobre datos del sistema

@@ -1,14 +1,5 @@
 package tariffs
 
-import (
-	data "github.com/Irictm/AutoFixPortfolio/Backend/Data"
-)
-
-type TariffAntiquity = data.Tariff
-type TariffMileage = data.TariffMileage
-type TariffOperations = data.TariffOperations
-type TariffRepairNumber = data.TariffRepairNumber
-
 type ITariffAntiquityService interface {
 	GetTariffAntiquityCell(string, int32) (float64, error)
 }
