@@ -24,7 +24,7 @@ package data
 import "time"
 
 type Vehicle struct {
-	Id              uint32
+	Id              int64
 	Patent          string
 	Brand           string
 	Model           string

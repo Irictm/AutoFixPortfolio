@@ -17,7 +17,7 @@ numero de reparaciones realizadas en el vehiculo el utimo año.
 package data
 
 type TariffRepairNumber struct {
-	Id        uint32
+	Id        int64
 	MotorType string
 	Bottom    int32
 	Top       int32

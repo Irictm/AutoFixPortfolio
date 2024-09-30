@@ -10,10 +10,10 @@ import (
 
 type ITariffRepairNumberService interface {
 	SaveTariffRepairNumber(TariffRepairNumber) (*TariffRepairNumber, error)
-	GetTariffRepairNumberById(uint32) (*TariffRepairNumber, error)
+	GetTariffRepairNumberById(int64) (*TariffRepairNumber, error)
 	GetAllTariffRepairNumber() ([]TariffRepairNumber, error)
 	UpdateTariffRepairNumber(TariffRepairNumber) error
-	DeleteTariffRepairNumberById(uint32) error
+	DeleteTariffRepairNumberById(int64) error
 }
 
 type Controller struct {
@@ -40,11 +40,11 @@ func (cntrl *Controller) getTariffRepairNumberById(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.IndentedJSON(http.StatusBadRequest, nil)
-		log.Printf("failed parsing id to uint: - %v", err)
+		log.Printf("failed parsing id to int: - %v", err)
 		return
 	}
 
-	tariffRepairNumber, err := cntrl.Service.GetTariffRepairNumberById(uint32(id))
+	tariffRepairNumber, err := cntrl.Service.GetTariffRepairNumberById(int64(id))
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, err)
 		log.Printf("failed getting tariffrepairnumber with id %d: - %v", id, err)
@@ -82,11 +82,11 @@ func (cntrl *Controller) deleteTariffRepairNumberById(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, err)
-		log.Printf("failed parsing id to uint: - %v", err)
+		log.Printf("failed parsing id to int: - %v", err)
 		return
 	}
 
-	err = cntrl.Service.DeleteTariffRepairNumberById(uint32(id))
+	err = cntrl.Service.DeleteTariffRepairNumberById(int64(id))
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, err)
 		log.Printf("failed deleting tariffrepairnumber with id %d: - %v", id, err)

@@ -10,10 +10,10 @@ import (
 
 type IBonusService interface {
 	SaveBonus(Bonus) (*Bonus, error)
-	GetBonusById(uint32) (*Bonus, error)
+	GetBonusById(int64) (*Bonus, error)
 	GetAllBonuses() ([]Bonus, error)
 	UpdateBonus(Bonus) error
-	DeleteBonusById(uint32) error
+	DeleteBonusById(int64) error
 }
 
 type Controller struct {
@@ -40,11 +40,11 @@ func (cntrl *Controller) getBonusById(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.IndentedJSON(http.StatusBadRequest, nil)
-		log.Printf("failed parsing id to uint: - %v", err)
+		log.Printf("failed parsing id to int: - %v", err)
 		return
 	}
 
-	bonus, err := cntrl.Service.GetBonusById(uint32(id))
+	bonus, err := cntrl.Service.GetBonusById(int64(id))
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, err)
 		log.Printf("failed getting bonus with id %d: - %v", id, err)
@@ -82,11 +82,11 @@ func (cntrl *Controller) deleteBonusById(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, err)
-		log.Printf("failed parsing id to uint: - %v", err)
+		log.Printf("failed parsing id to int: - %v", err)
 		return
 	}
 
-	err = cntrl.Service.DeleteBonusById(uint32(id))
+	err = cntrl.Service.DeleteBonusById(int64(id))
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, err)
 		log.Printf("failed deleting bonus with id %d: - %v", id, err)

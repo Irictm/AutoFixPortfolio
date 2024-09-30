@@ -25,7 +25,7 @@ func (repo *Repository) SaveTariffOperations(t TariffOperations) (*TariffOperati
 	return &t, nil
 }
 
-func (repo *Repository) GetTariffOperationsById(id uint32) (*TariffOperations, error) {
+func (repo *Repository) GetTariffOperationsById(id int64) (*TariffOperations, error) {
 	var t TariffOperations
 	row := repo.DB.QueryRow(context.Background(),
 		"SELECT * FROM tariff_operations WHERE id = $1", id)
@@ -37,7 +37,7 @@ func (repo *Repository) GetTariffOperationsById(id uint32) (*TariffOperations, e
 	return &t, nil
 }
 
-func (repo *Repository) GetTariffOperationsCell(motorType string, id_operation_type uint32) (*TariffOperations, error) {
+func (repo *Repository) GetTariffOperationsCell(motorType string, id_operation_type int64) (*TariffOperations, error) {
 	var t TariffOperations
 	row := repo.DB.QueryRow(context.Background(),
 		"SELECT * FROM tariff_operations WHERE motor_type = $1 AND id_operation_type = $2", motorType, id_operation_type)
@@ -81,7 +81,7 @@ func (repo *Repository) UpdateTariffOperations(t TariffOperations) error {
 	return nil
 }
 
-func (repo *Repository) DeleteTariffOperationsById(id uint32) error {
+func (repo *Repository) DeleteTariffOperationsById(id int64) error {
 	_, err := repo.DB.Exec(context.Background(), "DELETE tariff_operations "+
 		"WHERE id = $1", id)
 

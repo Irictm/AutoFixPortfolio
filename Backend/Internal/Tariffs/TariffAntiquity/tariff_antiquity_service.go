@@ -8,11 +8,11 @@ type TariffAntiquity = data.TariffAntiquity
 
 type ITariffAntiquityRepository interface {
 	SaveTariffAntiquity(TariffAntiquity) (*TariffAntiquity, error)
-	GetTariffAntiquityById(uint32) (*TariffAntiquity, error)
+	GetTariffAntiquityById(int64) (*TariffAntiquity, error)
 	GetTariffAntiquityCell(string, int32) (*TariffAntiquity, error)
 	GetAllTariffAntiquity() ([]TariffAntiquity, error)
 	UpdateTariffAntiquity(TariffAntiquity) error
-	DeleteTariffAntiquityById(uint32) error
+	DeleteTariffAntiquityById(int64) error
 }
 
 type Service struct {
@@ -23,7 +23,7 @@ func (serv *Service) SaveTariffAntiquity(t TariffAntiquity) (*TariffAntiquity, e
 	return serv.Repository.SaveTariffAntiquity(t)
 }
 
-func (serv *Service) GetTariffAntiquityById(id uint32) (*TariffAntiquity, error) {
+func (serv *Service) GetTariffAntiquityById(id int64) (*TariffAntiquity, error) {
 	return serv.Repository.GetTariffAntiquityById(id)
 }
 
@@ -43,6 +43,6 @@ func (serv *Service) UpdateTariffAntiquity(t TariffAntiquity) error {
 	return serv.Repository.UpdateTariffAntiquity(t)
 }
 
-func (serv *Service) DeleteTariffAntiquityById(id uint32) error {
+func (serv *Service) DeleteTariffAntiquityById(id int64) error {
 	return serv.Repository.DeleteTariffAntiquityById(id)
 }

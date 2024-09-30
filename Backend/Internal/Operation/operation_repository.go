@@ -27,7 +27,7 @@ func (repo *Repository) SaveOperation(op Operation) (*Operation, error) {
 	return &operation, nil
 }
 
-func (repo *Repository) GetOperationById(id uint32) (*Operation, error) {
+func (repo *Repository) GetOperationById(id int64) (*Operation, error) {
 	var operation Operation
 	err := repo.DB.QueryRow(context.Background(), "SELECT * FROM operations WHERE id = $1", id).Scan(
 		&operation.Id, &operation.Patent, &operation.Id_operation_type, &operation.Date, &operation.Cost, &operation.Id_repair)
@@ -66,7 +66,7 @@ func (repo *Repository) GetAllOperations() ([]Operation, error) {
 	return operations, nil
 }
 
-func (repo *Repository) GetAllOperationsByRepair(id_repair uint32) ([]Operation, error) {
+func (repo *Repository) GetAllOperationsByRepair(id_repair int64) ([]Operation, error) {
 	rows, err := repo.DB.Query(context.Background(),
 		"SELECT * FROM operations WHERE id_repair = $1", id_repair)
 	if err != nil {
@@ -96,7 +96,7 @@ func (repo *Repository) UpdateOperation(op Operation) error {
 	return nil
 }
 
-func (repo *Repository) DeleteOperationById(id uint32) error {
+func (repo *Repository) DeleteOperationById(id int64) error {
 	_, err := repo.DB.Exec(context.Background(), "DELETE FROM operations "+
 		"WHERE id = $1", id)
 

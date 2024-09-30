@@ -27,7 +27,7 @@ func (repo *Repository) SaveRepair(r Repair) (*Repair, error) {
 	return &repair, nil
 }
 
-func (repo *Repository) GetRepairById(id uint32) (*Repair, error) {
+func (repo *Repository) GetRepairById(id int64) (*Repair, error) {
 	var repair Repair
 	err := repo.DB.QueryRow(context.Background(), "SELECT * FROM repairs WHERE id = $1", id).Scan(
 		&repair.Id, &repair.DateOfAdmission, &repair.DateOfRelease, &repair.DateOfPickUp,
@@ -39,7 +39,7 @@ func (repo *Repository) GetRepairById(id uint32) (*Repair, error) {
 	return &repair, nil
 }
 
-func (repo *Repository) GetRepairByIdReceipt(id_receipt uint32) (*Repair, error) {
+func (repo *Repository) GetRepairByIdReceipt(id_receipt int64) (*Repair, error) {
 	var repair Repair
 	err := repo.DB.QueryRow(context.Background(), "SELECT * FROM repairs WHERE id_receipt = $1", id_receipt).Scan(
 		&repair.Id, &repair.DateOfAdmission, &repair.DateOfRelease, &repair.DateOfPickUp,
@@ -82,7 +82,7 @@ func (repo *Repository) UpdateRepair(r Repair) error {
 	return nil
 }
 
-func (repo *Repository) DeleteRepairById(id uint32) error {
+func (repo *Repository) DeleteRepairById(id int64) error {
 	_, err := repo.DB.Exec(context.Background(), "DELETE FROM repairs "+
 		"WHERE id = $1", id)
 

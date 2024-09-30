@@ -19,10 +19,10 @@ package data
 import "time"
 
 type Operation struct {
-	Id                uint32
+	Id                int64
 	Patent            string
-	Id_operation_type uint32
+	Id_operation_type int64
 	Date              time.Time
 	Cost              int32
-	Id_repair         uint32
+	Id_repair         int64
 }

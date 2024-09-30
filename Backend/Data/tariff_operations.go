@@ -13,7 +13,7 @@ Tariff Operations: Representa la tarifa asociada con una cierta operacion realiz
 package data
 
 type TariffOperations struct {
-	Id                uint32
+	Id                int64
 	MotorType         string
 	Id_operation_type int32
 	Value             int32

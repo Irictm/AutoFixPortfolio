@@ -9,7 +9,7 @@ type ITariffMileageService interface {
 }
 
 type ITariffOperationsService interface {
-	GetTariffOperationsCell(string, uint32) (int32, error)
+	GetTariffOperationsCell(string, int64) (int32, error)
 }
 
 type ITariffRepairNumberService interface {
@@ -23,7 +23,7 @@ type TariffService struct {
 	TariffRepairNumber ITariffRepairNumberService
 }
 
-func (serv *TariffService) GetOperationTariffValue(motorType string, id_operation_type uint32) (int32, error) {
+func (serv *TariffService) GetOperationTariffValue(motorType string, id_operation_type int64) (int32, error) {
 	return serv.TariffOperations.GetTariffOperationsCell(motorType, id_operation_type)
 }
 

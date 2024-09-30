@@ -26,7 +26,7 @@ func (repo *Repository) SaveBonus(b Bonus) (*Bonus, error) {
 	return &bonus, nil
 }
 
-func (repo *Repository) GetBonusById(id uint32) (*Bonus, error) {
+func (repo *Repository) GetBonusById(id int64) (*Bonus, error) {
 	var bonus Bonus
 	err := repo.DB.QueryRow(context.Background(), "SELECT * FROM bonuses WHERE id = $1", id).Scan(
 		&bonus.Id, &bonus.Brand, &bonus.Remaining, &bonus.Amount)
@@ -80,7 +80,7 @@ func (repo *Repository) UpdateBonus(b Bonus) error {
 	return nil
 }
 
-func (repo *Repository) DeleteBonusById(id uint32) error {
+func (repo *Repository) DeleteBonusById(id int64) error {
 	_, err := repo.DB.Exec(context.Background(), "DELETE FROM bonuses "+
 		"WHERE id = $1", id)
 

@@ -10,10 +10,10 @@ import (
 
 type ITariffMileageService interface {
 	SaveTariffMileage(TariffMileage) (*TariffMileage, error)
-	GetTariffMileageById(uint32) (*TariffMileage, error)
+	GetTariffMileageById(int64) (*TariffMileage, error)
 	GetAllTariffMileage() ([]TariffMileage, error)
 	UpdateTariffMileage(TariffMileage) error
-	DeleteTariffMileageById(uint32) error
+	DeleteTariffMileageById(int64) error
 }
 
 type Controller struct {
@@ -40,11 +40,11 @@ func (cntrl *Controller) getTariffMileageById(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.IndentedJSON(http.StatusBadRequest, nil)
-		log.Printf("failed parsing id to uint: - %v", err)
+		log.Printf("failed parsing id to int: - %v", err)
 		return
 	}
 
-	tariffMileage, err := cntrl.Service.GetTariffMileageById(uint32(id))
+	tariffMileage, err := cntrl.Service.GetTariffMileageById(int64(id))
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, err)
 		log.Printf("failed getting tariffmileage with id %d: - %v", id, err)
@@ -82,11 +82,11 @@ func (cntrl *Controller) deleteTariffMileageById(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, err)
-		log.Printf("failed parsing id to uint: - %v", err)
+		log.Printf("failed parsing id to int: - %v", err)
 		return
 	}
 
-	err = cntrl.Service.DeleteTariffMileageById(uint32(id))
+	err = cntrl.Service.DeleteTariffMileageById(int64(id))
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, err)
 		log.Printf("failed deleting tariffmileage with id %d: - %v", id, err)

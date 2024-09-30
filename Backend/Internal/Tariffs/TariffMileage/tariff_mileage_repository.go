@@ -25,7 +25,7 @@ func (repo *Repository) SaveTariffMileage(t TariffMileage) (*TariffMileage, erro
 	return &t, nil
 }
 
-func (repo *Repository) GetTariffMileageById(id uint32) (*TariffMileage, error) {
+func (repo *Repository) GetTariffMileageById(id int64) (*TariffMileage, error) {
 	var t TariffMileage
 	row := repo.DB.QueryRow(context.Background(),
 		"SELECT * FROM tariff_mileage WHERE id = $1", id)
@@ -81,7 +81,7 @@ func (repo *Repository) UpdateTariffMileage(t TariffMileage) error {
 	return nil
 }
 
-func (repo *Repository) DeleteTariffMileageById(id uint32) error {
+func (repo *Repository) DeleteTariffMileageById(id int64) error {
 	_, err := repo.DB.Exec(context.Background(), "DELETE tariff_mileage "+
 		"WHERE id = $1", id)
 

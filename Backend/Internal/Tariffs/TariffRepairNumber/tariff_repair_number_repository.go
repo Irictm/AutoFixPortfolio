@@ -25,7 +25,7 @@ func (repo *Repository) SaveTariffRepairNumber(t TariffRepairNumber) (*TariffRep
 	return &t, nil
 }
 
-func (repo *Repository) GetTariffRepairNumberById(id uint32) (*TariffRepairNumber, error) {
+func (repo *Repository) GetTariffRepairNumberById(id int64) (*TariffRepairNumber, error) {
 	var t TariffRepairNumber
 	row := repo.DB.QueryRow(context.Background(),
 		"SELECT * FROM tariff_repair_number WHERE id = $1", id)
@@ -81,7 +81,7 @@ func (repo *Repository) UpdateTariffRepairNumber(t TariffRepairNumber) error {
 	return nil
 }
 
-func (repo *Repository) DeleteTariffRepairNumberById(id uint32) error {
+func (repo *Repository) DeleteTariffRepairNumberById(id int64) error {
 	_, err := repo.DB.Exec(context.Background(), "DELETE tariff_repair_number "+
 		"WHERE id = $1", id)
 

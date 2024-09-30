@@ -18,11 +18,11 @@ const IVA float64 = 0.19
 
 type IReceiptRepository interface {
 	SaveReceipt(Receipt) (*Receipt, error)
-	GetReceiptById(uint32) (*Receipt, error)
-	GetVehicleRepairNumberLastYear(uint32) (int32, error)
+	GetReceiptById(int64) (*Receipt, error)
+	GetVehicleRepairNumberLastYear(int64) (int32, error)
 	GetAllReceipts() ([]Receipt, error)
 	UpdateReceipt(Receipt) error
-	DeleteReceiptById(uint32) error
+	DeleteReceiptById(int64) error
 }
 
 type ITariffService interface {
@@ -37,15 +37,15 @@ type IBonusService interface {
 }
 
 type IVehicleService interface {
-	GetVehicleById(uint32) (*Vehicle, error)
+	GetVehicleById(int64) (*Vehicle, error)
 }
 
 type IOperationService interface {
-	CalculateTotalBaseCost(uint32, string) (int32, error)
+	CalculateTotalBaseCost(int64, string) (int32, error)
 }
 
 type IRepairService interface {
-	GetRepairByIdReceipt(uint32) (*Repair, error)
+	GetRepairByIdReceipt(int64) (*Repair, error)
 }
 
 type Service struct {
@@ -61,11 +61,11 @@ func (serv *Service) SaveReceipt(r Receipt) (*Receipt, error) {
 	return serv.Repository.SaveReceipt(r)
 }
 
-func (serv *Service) GetReceiptById(id uint32) (*Receipt, error) {
+func (serv *Service) GetReceiptById(id int64) (*Receipt, error) {
 	return serv.Repository.GetReceiptById(id)
 }
 
-func (serv *Service) CalcTotalAmount(id uint32) (*Receipt, error) {
+func (serv *Service) CalcTotalAmount(id int64) (*Receipt, error) {
 	var err error
 	var baseAmount, bonusAmount int32
 	var antiqRecharge, mileageRecharge, delayRecharge float64
@@ -158,7 +158,7 @@ func (serv *Service) CalcDelayRecharge(dateOfPickUp time.Time, dateOfRelease tim
 	return float64(int(hoursBetween/24)) * RECHARGE_PER_DELAY_DAY
 }
 
-func (serv *Service) CalcRepairNumberDiscount(motorType string, id_vehicle uint32) (float64, error) {
+func (serv *Service) CalcRepairNumberDiscount(motorType string, id_vehicle int64) (float64, error) {
 	repairNumberCount, err := serv.Repository.GetVehicleRepairNumberLastYear(id_vehicle)
 	if err != nil {
 		return 0, nil
@@ -185,6 +185,6 @@ func (serv *Service) UpdateReceipt(r Receipt) error {
 	return serv.Repository.UpdateReceipt(r)
 }
 
-func (serv *Service) DeleteReceiptById(id uint32) error {
+func (serv *Service) DeleteReceiptById(id int64) error {
 	return serv.Repository.DeleteReceiptById(id)
 }

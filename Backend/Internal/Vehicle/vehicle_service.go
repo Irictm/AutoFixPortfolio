@@ -6,10 +6,10 @@ type Vehicle = data.Vehicle
 
 type IVehicleRepository interface {
 	SaveVehicle(Vehicle) (*Vehicle, error)
-	GetVehicleById(uint32) (*Vehicle, error)
+	GetVehicleById(int64) (*Vehicle, error)
 	GetAllVehicles() ([]Vehicle, error)
 	UpdateVehicle(Vehicle) error
-	DeleteVehicleById(uint32) error
+	DeleteVehicleById(int64) error
 }
 
 type Service struct {
@@ -20,7 +20,7 @@ func (serv *Service) SaveVehicle(v Vehicle) (*Vehicle, error) {
 	return serv.Repository.SaveVehicle(v)
 }
 
-func (serv *Service) GetVehicleById(id uint32) (*Vehicle, error) {
+func (serv *Service) GetVehicleById(id int64) (*Vehicle, error) {
 	return serv.Repository.GetVehicleById(id)
 }
 
@@ -32,6 +32,6 @@ func (serv *Service) UpdateVehicle(v Vehicle) error {
 	return serv.Repository.UpdateVehicle(v)
 }
 
-func (serv *Service) DeleteVehicleById(id uint32) error {
+func (serv *Service) DeleteVehicleById(id int64) error {
 	return serv.Repository.DeleteVehicleById(id)
 }

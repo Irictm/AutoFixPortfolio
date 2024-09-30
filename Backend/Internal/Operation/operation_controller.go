@@ -10,10 +10,10 @@ import (
 
 type IOperationService interface {
 	SaveOperation(Operation) (*Operation, error)
-	GetOperationById(uint32) (*Operation, error)
+	GetOperationById(int64) (*Operation, error)
 	GetAllOperations() ([]Operation, error)
 	UpdateOperation(Operation) error
-	DeleteOperationById(uint32) error
+	DeleteOperationById(int64) error
 }
 
 type Controller struct {
@@ -40,11 +40,11 @@ func (cntrl *Controller) getOperationById(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.IndentedJSON(http.StatusBadRequest, nil)
-		log.Printf("failed parsing id to uint: - %v", err)
+		log.Printf("failed parsing id to int: - %v", err)
 		return
 	}
 
-	operation, err := cntrl.Service.GetOperationById(uint32(id))
+	operation, err := cntrl.Service.GetOperationById(int64(id))
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, err)
 		log.Printf("failed getting operation with id %d: - %v", id, err)
@@ -82,11 +82,11 @@ func (cntrl *Controller) deleteOperationById(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, err)
-		log.Printf("failed parsing id to uint: - %v", err)
+		log.Printf("failed parsing id to int: - %v", err)
 		return
 	}
 
-	err = cntrl.Service.DeleteOperationById(uint32(id))
+	err = cntrl.Service.DeleteOperationById(int64(id))
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, err)
 		log.Printf("failed deleting operation with id %d: - %v", id, err)

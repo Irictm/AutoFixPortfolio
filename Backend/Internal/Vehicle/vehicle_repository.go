@@ -27,7 +27,7 @@ func (repo *Repository) SaveVehicle(v Vehicle) (*Vehicle, error) {
 	return &vehicle, nil
 }
 
-func (repo *Repository) GetVehicleById(id uint32) (*Vehicle, error) {
+func (repo *Repository) GetVehicleById(id int64) (*Vehicle, error) {
 	var vehicle Vehicle
 	err := repo.DB.QueryRow(context.Background(), "SELECT * FROM vehicles WHERE id = $1", id).Scan(
 		&vehicle.Id, &vehicle.Patent, &vehicle.Brand, &vehicle.Model, &vehicle.Type,
@@ -69,7 +69,7 @@ func (repo *Repository) UpdateVehicle(v Vehicle) error {
 	return nil
 }
 
-func (repo *Repository) DeleteVehicleById(id uint32) error {
+func (repo *Repository) DeleteVehicleById(id int64) error {
 	_, err := repo.DB.Exec(context.Background(), "DELETE FROM vehicles "+
 		"WHERE id = $1", id)
 

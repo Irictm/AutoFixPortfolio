@@ -10,10 +10,10 @@ import (
 
 type IVehicleService interface {
 	SaveVehicle(Vehicle) (*Vehicle, error)
-	GetVehicleById(uint32) (*Vehicle, error)
+	GetVehicleById(int64) (*Vehicle, error)
 	GetAllVehicles() ([]Vehicle, error)
 	UpdateVehicle(Vehicle) error
-	DeleteVehicleById(uint32) error
+	DeleteVehicleById(int64) error
 }
 
 type Controller struct {
@@ -40,11 +40,11 @@ func (cntrl *Controller) getVehicleById(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.IndentedJSON(http.StatusBadRequest, nil)
-		log.Printf("failed parsing id to uint: - %v", err)
+		log.Printf("failed parsing id to int: - %v", err)
 		return
 	}
 
-	vehicle, err := cntrl.Service.GetVehicleById(uint32(id))
+	vehicle, err := cntrl.Service.GetVehicleById(int64(id))
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, err)
 		log.Printf("failed getting vehicle with id %d: - %v", id, err)
@@ -82,11 +82,11 @@ func (cntrl *Controller) deleteVehicleById(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, err)
-		log.Printf("failed parsing id to uint: - %v", err)
+		log.Printf("failed parsing id to int: - %v", err)
 		return
 	}
 
-	err = cntrl.Service.DeleteVehicleById(uint32(id))
+	err = cntrl.Service.DeleteVehicleById(int64(id))
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, err)
 		log.Printf("failed deleting vehicle with id %d: - %v", id, err)

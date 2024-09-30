@@ -27,7 +27,7 @@ func (repo *Repository) SaveReceipt(r Receipt) (*Receipt, error) {
 	return &receipt, nil
 }
 
-func (repo *Repository) GetReceiptById(id uint32) (*Receipt, error) {
+func (repo *Repository) GetReceiptById(id int64) (*Receipt, error) {
 	var receipt Receipt
 	err := repo.DB.QueryRow(context.Background(), "SELECT * FROM receipts WHERE id = $1", id).Scan(
 		&receipt.Id, &receipt.OperationsAmount, &receipt.RechargeAmount, &receipt.DiscountAmount,
@@ -39,7 +39,7 @@ func (repo *Repository) GetReceiptById(id uint32) (*Receipt, error) {
 	return &receipt, nil
 }
 
-func (repo *Repository) GetVehicleRepairNumberLastYear(id_vehicle uint32) (int32, error) {
+func (repo *Repository) GetVehicleRepairNumberLastYear(id_vehicle int64) (int32, error) {
 	var repairNumberCount int32
 	err := repo.DB.QueryRow(context.Background(), "SELECT COUNT(id) FROM repairs WHERE id_vehicle = $1 AND date_of_admission BETWEEN (NOW() - INTERVAL '1 year') AND NOW()",
 		id_vehicle).Scan(&repairNumberCount)
@@ -81,7 +81,7 @@ func (repo *Repository) UpdateReceipt(r Receipt) error {
 	return nil
 }
 
-func (repo *Repository) DeleteReceiptById(id uint32) error {
+func (repo *Repository) DeleteReceiptById(id int64) error {
 	_, err := repo.DB.Exec(context.Background(), "DELETE FROM receipts "+
 		"WHERE id = $1", id)
 

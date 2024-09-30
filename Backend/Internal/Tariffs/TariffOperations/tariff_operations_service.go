@@ -8,11 +8,11 @@ type TariffOperations = data.TariffOperations
 
 type ITariffOperationsRepository interface {
 	SaveTariffOperations(TariffOperations) (*TariffOperations, error)
-	GetTariffOperationsById(uint32) (*TariffOperations, error)
-	GetTariffOperationsCell(string, uint32) (*TariffOperations, error)
+	GetTariffOperationsById(int64) (*TariffOperations, error)
+	GetTariffOperationsCell(string, int64) (*TariffOperations, error)
 	GetAllTariffOperations() ([]TariffOperations, error)
 	UpdateTariffOperations(TariffOperations) error
-	DeleteTariffOperationsById(uint32) error
+	DeleteTariffOperationsById(int64) error
 }
 
 type Service struct {
@@ -23,11 +23,11 @@ func (serv *Service) SaveTariffOperations(t TariffOperations) (*TariffOperations
 	return serv.Repository.SaveTariffOperations(t)
 }
 
-func (serv *Service) GetTariffOperationsById(id uint32) (*TariffOperations, error) {
+func (serv *Service) GetTariffOperationsById(id int64) (*TariffOperations, error) {
 	return serv.Repository.GetTariffOperationsById(id)
 }
 
-func (serv *Service) GetTariffOperationsCell(motorType string, id_operation_type uint32) (int32, error) {
+func (serv *Service) GetTariffOperationsCell(motorType string, id_operation_type int64) (int32, error) {
 	t, err := serv.Repository.GetTariffOperationsCell(motorType, id_operation_type)
 	if err != nil {
 		return 0, err
@@ -43,6 +43,6 @@ func (serv *Service) UpdateTariffOperations(t TariffOperations) error {
 	return serv.Repository.UpdateTariffOperations(t)
 }
 
-func (serv *Service) DeleteTariffOperationsById(id uint32) error {
+func (serv *Service) DeleteTariffOperationsById(id int64) error {
 	return serv.Repository.DeleteTariffOperationsById(id)
 }

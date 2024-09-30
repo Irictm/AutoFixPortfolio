@@ -10,11 +10,11 @@ import (
 
 type IReceiptService interface {
 	SaveReceipt(Receipt) (*Receipt, error)
-	GetReceiptById(uint32) (*Receipt, error)
+	GetReceiptById(int64) (*Receipt, error)
 	GetAllReceipts() ([]Receipt, error)
 	UpdateReceipt(Receipt) error
-	CalcTotalAmount(uint32) (*Receipt, error)
-	DeleteReceiptById(uint32) error
+	CalcTotalAmount(int64) (*Receipt, error)
+	DeleteReceiptById(int64) error
 }
 
 type Controller struct {
@@ -41,11 +41,11 @@ func (cntrl *Controller) getReceiptById(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.IndentedJSON(http.StatusBadRequest, nil)
-		log.Printf("failed parsing id to uint: - %v", err)
+		log.Printf("failed parsing id to int: - %v", err)
 		return
 	}
 
-	receipt, err := cntrl.Service.GetReceiptById(uint32(id))
+	receipt, err := cntrl.Service.GetReceiptById(int64(id))
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, err)
 		log.Printf("failed getting receipt with id %d: - %v", id, err)
@@ -83,10 +83,10 @@ func (cntrl *Controller) calcTotalCostReceipt(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.IndentedJSON(http.StatusBadRequest, nil)
-		log.Printf("failed parsing id to uint: - %v", err)
+		log.Printf("failed parsing id to int: - %v", err)
 		return
 	}
-	newReceipt, err := cntrl.Service.CalcTotalAmount(uint32(id))
+	newReceipt, err := cntrl.Service.CalcTotalAmount(int64(id))
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, err)
 		log.Printf("failed calculating total value receipt: - %v", err)
@@ -99,11 +99,11 @@ func (cntrl *Controller) deleteReceiptById(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, err)
-		log.Printf("failed parsing id to uint: - %v", err)
+		log.Printf("failed parsing id to int: - %v", err)
 		return
 	}
 
-	err = cntrl.Service.DeleteReceiptById(uint32(id))
+	err = cntrl.Service.DeleteReceiptById(int64(id))
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, err)
 		log.Printf("failed deleting receipt with id %d: - %v", id, err)

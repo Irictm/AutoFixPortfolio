@@ -10,11 +10,11 @@ type Bonus = data.Bonus
 
 type IBonusRepository interface {
 	SaveBonus(Bonus) (*Bonus, error)
-	GetBonusById(uint32) (*Bonus, error)
+	GetBonusById(int64) (*Bonus, error)
 	GetBonusByBrand(string) (*Bonus, error)
 	GetAllBonuses() ([]Bonus, error)
 	UpdateBonus(Bonus) error
-	DeleteBonusById(uint32) error
+	DeleteBonusById(int64) error
 }
 
 type Service struct {
@@ -25,7 +25,7 @@ func (serv *Service) SaveBonus(b Bonus) (*Bonus, error) {
 	return serv.Repository.SaveBonus(b)
 }
 
-func (serv *Service) GetBonusById(id uint32) (*Bonus, error) {
+func (serv *Service) GetBonusById(id int64) (*Bonus, error) {
 	return serv.Repository.GetBonusById(id)
 }
 
@@ -60,6 +60,6 @@ func (serv *Service) UpdateBonus(b Bonus) error {
 	return serv.Repository.UpdateBonus(b)
 }
 
-func (serv *Service) DeleteBonusById(id uint32) error {
+func (serv *Service) DeleteBonusById(id int64) error {
 	return serv.Repository.DeleteBonusById(id)
 }

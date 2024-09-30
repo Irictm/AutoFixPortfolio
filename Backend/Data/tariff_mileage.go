@@ -16,7 +16,7 @@ kilometraje del vehiculo
 package data
 
 type TariffMileage struct {
-	Id          uint32
+	Id          int64
 	VehicleType string
 	Bottom      int32
 	Top         int32

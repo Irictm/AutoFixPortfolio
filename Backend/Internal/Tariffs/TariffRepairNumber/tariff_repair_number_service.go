@@ -8,11 +8,11 @@ type TariffRepairNumber = data.TariffRepairNumber
 
 type ITariffRepairNumberRepository interface {
 	SaveTariffRepairNumber(TariffRepairNumber) (*TariffRepairNumber, error)
-	GetTariffRepairNumberById(uint32) (*TariffRepairNumber, error)
+	GetTariffRepairNumberById(int64) (*TariffRepairNumber, error)
 	GetTariffRepairNumberCell(string, int32) (*TariffRepairNumber, error)
 	GetAllTariffRepairNumber() ([]TariffRepairNumber, error)
 	UpdateTariffRepairNumber(TariffRepairNumber) error
-	DeleteTariffRepairNumberById(uint32) error
+	DeleteTariffRepairNumberById(int64) error
 }
 
 type Service struct {
@@ -23,7 +23,7 @@ func (serv *Service) SaveTariffRepairNumber(t TariffRepairNumber) (*TariffRepair
 	return serv.Repository.SaveTariffRepairNumber(t)
 }
 
-func (serv *Service) GetTariffRepairNumberById(id uint32) (*TariffRepairNumber, error) {
+func (serv *Service) GetTariffRepairNumberById(id int64) (*TariffRepairNumber, error) {
 	return serv.Repository.GetTariffRepairNumberById(id)
 }
 
@@ -43,6 +43,6 @@ func (serv *Service) UpdateTariffRepairNumber(t TariffRepairNumber) error {
 	return serv.Repository.UpdateTariffRepairNumber(t)
 }
 
-func (serv *Service) DeleteTariffRepairNumberById(id uint32) error {
+func (serv *Service) DeleteTariffRepairNumberById(id int64) error {
 	return serv.Repository.DeleteTariffRepairNumberById(id)
 }

@@ -10,10 +10,10 @@ import (
 
 type ITariffAntiquityService interface {
 	SaveTariffAntiquity(TariffAntiquity) (*TariffAntiquity, error)
-	GetTariffAntiquityById(uint32) (*TariffAntiquity, error)
+	GetTariffAntiquityById(int64) (*TariffAntiquity, error)
 	GetAllTariffAntiquity() ([]TariffAntiquity, error)
 	UpdateTariffAntiquity(TariffAntiquity) error
-	DeleteTariffAntiquityById(uint32) error
+	DeleteTariffAntiquityById(int64) error
 }
 
 type Controller struct {
@@ -40,11 +40,11 @@ func (cntrl *Controller) getTariffAntiquityById(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.IndentedJSON(http.StatusBadRequest, nil)
-		log.Printf("failed parsing id to uint: - %v", err)
+		log.Printf("failed parsing id to int: - %v", err)
 		return
 	}
 
-	tariffAntiquity, err := cntrl.Service.GetTariffAntiquityById(uint32(id))
+	tariffAntiquity, err := cntrl.Service.GetTariffAntiquityById(int64(id))
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, err)
 		log.Printf("failed getting tariffantiquity with id %d: - %v", id, err)
@@ -82,11 +82,11 @@ func (cntrl *Controller) deleteTariffAntiquityById(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, err)
-		log.Printf("failed parsing id to uint: - %v", err)
+		log.Printf("failed parsing id to int: - %v", err)
 		return
 	}
 
-	err = cntrl.Service.DeleteTariffAntiquityById(uint32(id))
+	err = cntrl.Service.DeleteTariffAntiquityById(int64(id))
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, err)
 		log.Printf("failed deleting tariffantiquity with id %d: - %v", id, err)

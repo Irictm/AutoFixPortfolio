@@ -16,7 +16,7 @@ antiguedad del vehiculo
 package data
 
 type TariffAntiquity struct {
-	Id          uint32
+	Id          int64
 	VehicleType string
 	Bottom      int32
 	Top         int32

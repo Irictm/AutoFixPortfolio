@@ -10,10 +10,10 @@ import (
 
 type IRepairService interface {
 	SaveRepair(Repair) (*Repair, error)
-	GetRepairById(uint32) (*Repair, error)
+	GetRepairById(int64) (*Repair, error)
 	GetAllRepairs() ([]Repair, error)
 	UpdateRepair(Repair) error
-	DeleteRepairById(uint32) error
+	DeleteRepairById(int64) error
 }
 
 type Controller struct {
@@ -40,11 +40,11 @@ func (cntrl *Controller) getRepairById(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.IndentedJSON(http.StatusBadRequest, nil)
-		log.Printf("failed parsing id to uint: - %v", err)
+		log.Printf("failed parsing id to int: - %v", err)
 		return
 	}
 
-	repair, err := cntrl.Service.GetRepairById(uint32(id))
+	repair, err := cntrl.Service.GetRepairById(int64(id))
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, err)
 		log.Printf("failed getting repair with id %d: - %v", id, err)
@@ -82,11 +82,11 @@ func (cntrl *Controller) deleteRepairById(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, err)
-		log.Printf("failed parsing id to uint: - %v", err)
+		log.Printf("failed parsing id to int: - %v", err)
 		return
 	}
 
-	err = cntrl.Service.DeleteRepairById(uint32(id))
+	err = cntrl.Service.DeleteRepairById(int64(id))
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, err)
 		log.Printf("failed deleting repair with id %d: - %v", id, err)

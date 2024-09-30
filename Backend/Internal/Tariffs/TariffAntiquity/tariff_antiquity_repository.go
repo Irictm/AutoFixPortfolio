@@ -25,7 +25,7 @@ func (repo *Repository) SaveTariffAntiquity(t TariffAntiquity) (*TariffAntiquity
 	return &t, nil
 }
 
-func (repo *Repository) GetTariffAntiquityById(id uint32) (*TariffAntiquity, error) {
+func (repo *Repository) GetTariffAntiquityById(id int64) (*TariffAntiquity, error) {
 	var t TariffAntiquity
 	row := repo.DB.QueryRow(context.Background(),
 		"SELECT * FROM tariff_antiquity WHERE id = $1", id)
@@ -81,7 +81,7 @@ func (repo *Repository) UpdateTariffAntiquity(t TariffAntiquity) error {
 	return nil
 }
 
-func (repo *Repository) DeleteTariffAntiquityById(id uint32) error {
+func (repo *Repository) DeleteTariffAntiquityById(id int64) error {
 	_, err := repo.DB.Exec(context.Background(), "DELETE tariff_antiquity "+
 		"WHERE id = $1", id)
 

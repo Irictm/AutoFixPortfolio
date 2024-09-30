@@ -14,7 +14,7 @@ correspondiente marca.
 package data
 
 type Bonus struct {
-	Id        uint32
+	Id        int64
 	Brand     string
 	Remaining uint8
 	Amount    int32
