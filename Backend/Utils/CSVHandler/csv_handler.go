@@ -3,7 +3,7 @@ package csvHandler
 import (
 	"bytes"
 	"encoding/csv"
-	"log"
+	"fmt"
 	"mime/multipart"
 
 	"github.com/gin-gonic/gin"
@@ -13,7 +13,9 @@ type fileUpload struct {
 	CSVFile *multipart.FileHeader `form:"file"`
 }
 
-func AttachCSV(c *gin.Context) {
+type CsvHandler struct{}
+
+func (*CsvHandler) AttachCSV(c *gin.Context) error {
 	sample := [][]string{
 		{"Kilometraje", "Sedan", "Hatchback", "SUV", "Pickup", "Furgoneta"},
 		{"0 - 5_000", "0", "0", "0", "0", "0"},
@@ -29,34 +31,36 @@ func AttachCSV(c *gin.Context) {
 
 	_, err := c.Writer.Write(csvBuffer.Bytes())
 	if err != nil {
-		log.Printf("Failed writing buffer to context - [%v]", err)
-		return
+		err = fmt.Errorf("failed writing buffer to context: - %w", err)
+		return err
 	}
+	return nil
 }
 
-func ReceiveCSV(c *gin.Context) [][]string {
+func (*CsvHandler) ReceiveCSV(c *gin.Context) ([][]string, error) {
 	var csvfile fileUpload
-	if err := c.ShouldBind(&csvfile); err != nil {
-		log.Printf("Failed binding to json - [%v]", err)
-		return nil
+	var err error
+	if err = c.ShouldBind(&csvfile); err != nil {
+		err = fmt.Errorf("failed binding to json: - %w", err)
+		return nil, err
 	}
 
 	if csvfile.CSVFile == nil {
-		log.Printf("Failed, CSV file missing.")
-		return nil
+		err = fmt.Errorf("failed, CSV file missing")
+		return nil, err
 	}
 
 	file, err := csvfile.CSVFile.Open()
 	if err != nil {
-		log.Printf("Failed opening CSV file - [%v]", err)
-		return nil
+		err = fmt.Errorf("failed opening CSV file: - %w", err)
+		return nil, err
 	}
 
 	records, err := csv.NewReader(file).ReadAll()
 	if err != nil {
-		log.Printf("Failed reading CSV file - [%v]", err)
-		return nil
+		err = fmt.Errorf("failed reading CSV file: - %w", err)
+		return nil, err
 	}
 
-	return records
+	return records, nil
 }

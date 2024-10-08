@@ -18,7 +18,7 @@ package data
 type TariffMileage struct {
 	Id          int64
 	VehicleType string
-	Bottom      int32
-	Top         int32
+	Bottom      float64
+	Top         float64
 	Value       float64
 }

@@ -133,8 +133,8 @@ CREATE TABLE IF NOT EXISTS public.tariff_repair_number
 (
     id bigint NOT NULL DEFAULT nextval('tariff_repair_number_id_seq'::regclass),
     motor_type text,
-    bottom integer,
-    top integer,
+    bottom double precision,
+    top double precision,
     value double precision,
     CONSTRAINT tariff_repair_number_pkey PRIMARY KEY (id)
 )
@@ -153,8 +153,8 @@ CREATE TABLE IF NOT EXISTS public.tariff_mileage
 (
     id bigint NOT NULL DEFAULT nextval('tariff_mileage_id_seq'::regclass),
     vehicle_type text,
-    bottom integer,
-    top integer,
+    bottom double precision,
+    top double precision,
     value double precision,
     CONSTRAINT tariff_mileage_pkey PRIMARY KEY (id)
 )
@@ -173,8 +173,8 @@ CREATE TABLE IF NOT EXISTS public.tariff_antiquity
 (
     id bigint NOT NULL DEFAULT nextval('tariff_antiquity_id_seq'::regclass),
     vehicle_type text,
-    bottom integer,
-    top integer,
+    bottom double precision,
+    top double precision,
     value double precision,
     CONSTRAINT tariff_antiquity_pkey PRIMARY KEY (id)
 )

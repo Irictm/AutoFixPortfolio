@@ -14,6 +14,7 @@ import (
 	tariffOperations "github.com/Irictm/AutoFixPortfolio/Backend/Internal/Tariffs/TariffOperations"
 	tariffRepairNumber "github.com/Irictm/AutoFixPortfolio/Backend/Internal/Tariffs/TariffRepairNumber"
 	vehicle "github.com/Irictm/AutoFixPortfolio/Backend/Internal/Vehicle"
+	csvHandler "github.com/Irictm/AutoFixPortfolio/Backend/Utils/CSVHandler"
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5"
 )
@@ -23,6 +24,8 @@ func InjectDependencies(rout *gin.Engine) {
 	if err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
+	csvHandler := csvHandler.CsvHandler{}
+
 	vehicleRepository := &vehicle.Repository{DB: db}
 	vehicleService := &vehicle.Service{Repository: vehicleRepository}
 	vehicleController := vehicle.Controller{Service: vehicleService}
@@ -30,7 +33,7 @@ func InjectDependencies(rout *gin.Engine) {
 
 	tariffAntiquityRepository := tariffAntiquity.Repository{DB: db}
 	tariffAntiquityService := tariffAntiquity.Service{Repository: &tariffAntiquityRepository}
-	tariffAntiquityController := tariffAntiquity.Controller{Service: &tariffAntiquityService}
+	tariffAntiquityController := tariffAntiquity.Controller{Service: &tariffAntiquityService, CsvHandler: &csvHandler}
 	tariffAntiquityController.LinkPaths(rout)
 
 	tariffMileageRepository := tariffMileage.Repository{DB: db}

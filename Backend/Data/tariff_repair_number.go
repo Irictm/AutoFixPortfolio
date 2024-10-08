@@ -19,7 +19,7 @@ package data
 type TariffRepairNumber struct {
 	Id        int64
 	MotorType string
-	Bottom    int32
-	Top       int32
+	Bottom    float64
+	Top       float64
 	Value     float64
 }
